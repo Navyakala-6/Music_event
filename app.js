@@ -197,7 +197,38 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 
 // Initial render
 renderList();
-renderChips();
+// renderChips();
+
+// Sidebar expand/collapse button for mobile
+const sidebarToggle = document.getElementById('sidebarToggle');
+const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
+function updateSidebarToggleVisibility() {
+  if (window.innerWidth <= 900) {
+    sidebarToggle.style.display = 'flex';
+    // Set icon based on state
+    if (sidebar.classList.contains('expanded')) {
+      sidebarToggleIcon.innerHTML = '&larr;'; // left arrow to collapse
+    } else {
+      sidebarToggleIcon.innerHTML = '&#9776;'; // hamburger to expand
+    }
+  } else {
+    sidebarToggle.style.display = 'none';
+  }
+}
+if (sidebarToggle) {
+  sidebarToggle.addEventListener('click', () => {
+    if (sidebar.classList.contains('expanded')) {
+      sidebar.classList.remove('expanded');
+      layout.classList.remove('sidebar-expanded');
+    } else {
+      sidebar.classList.add('expanded');
+      layout.classList.add('sidebar-expanded');
+    }
+    updateSidebarToggleVisibility();
+  });
+}
+window.addEventListener('resize', updateSidebarToggleVisibility);
+window.addEventListener('DOMContentLoaded', updateSidebarToggleVisibility);
 
 
 
