@@ -236,59 +236,63 @@ window.addEventListener('DOMContentLoaded', updateSidebarToggleVisibility);
 const sidebar = document.querySelector('.sidebar');
 const layout = document.querySelector('.layout');
 const content = document.querySelector('.content');
+
 let touchStartX = null;
+let touchStartY = null;
 let touchEndX = null;
+let touchEndY = null;
 
 function isMobileSidebar() {
   return window.innerWidth <= 900;
 }
 
+
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1) {
     const x = e.touches[0].clientX;
-    // Only allow swipe right to open if starting near left edge and sidebar is not expanded
-    if (x < 20 && !sidebar.classList.contains('expanded')) {
-      touchStartX = x;
-      touchEndX = x;
-    } else if (sidebar.classList.contains('expanded')) {
-      // Allow swipe left to close if sidebar is expanded, from anywhere
-      touchStartX = x;
-      touchEndX = x;
-    } else {
-      touchStartX = null;
-      touchEndX = null;
-    }
+    const y = e.touches[0].clientY;
+    touchStartX = x;
+    touchStartY = y;
+    touchEndX = x;
+    touchEndY = y;
   }
 }
 function handleTouchMove(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1 && touchStartX !== null) {
     touchEndX = e.touches[0].clientX;
+    touchEndY = e.touches[0].clientY;
   }
 }
-function handleTouchEnd(target) {
+function handleTouchEnd() {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
     const dx = touchEndX - touchStartX;
-    if (dx > 60 && !sidebar.classList.contains('expanded')) { // swipe right to open
-      sidebar.classList.add('expanded');
-      layout.classList.add('sidebar-expanded');
-    } else if (dx < -60 && sidebar.classList.contains('expanded')) { // swipe left to close
-      sidebar.classList.remove('expanded');
-      layout.classList.remove('sidebar-expanded');
+    const dy = Math.abs(touchEndY - touchStartY);
+    // Only trigger if mostly horizontal swipe
+    if (dy < 40) {
+      // Swipe right to open
+      if (touchStartX < 20 && dx > 60 && !sidebar.classList.contains('expanded')) {
+        sidebar.classList.add('expanded');
+        layout.classList.add('sidebar-expanded');
+      }
+      // Swipe left to close
+      else if (dx < -60 && sidebar.classList.contains('expanded')) {
+        sidebar.classList.remove('expanded');
+        layout.classList.remove('sidebar-expanded');
+      }
     }
   }
-  touchStartX = null; 
+  touchStartX = null;
+  touchStartY = null;
   touchEndX = null;
+  touchEndY = null;
 }
 
-// Listen for swipe on the whole document for open, and on sidebar/content for close
 document.addEventListener('touchstart', handleTouchStart, { passive: true });
 document.addEventListener('touchmove', handleTouchMove, { passive: true });
-document.addEventListener('touchend', function(e) {
-  handleTouchEnd(e.target);
-}, { passive: true });
+document.addEventListener('touchend', handleTouchEnd, { passive: true });
 
 // Remove expanded state if resizing to desktop
 window.addEventListener('resize', () => {
