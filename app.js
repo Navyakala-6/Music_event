@@ -1,3 +1,9 @@
+function handleTouchMove(e) {
+  if (!isMobileSidebar()) return;
+  if (e.touches && e.touches.length === 1) {
+    touchEndX = e.touches[0].clientX;
+  }
+}
 const instruments = [
   { id: 'piano', name: 'Piano', emoji: '🎹' },
   { id: 'guitar', name: 'Guitar', emoji: '🎸' },
