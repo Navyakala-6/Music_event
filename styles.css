@@ -1,0 +1,281 @@
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #0ea5e9;
+  color: white;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+.header-left { width: 36px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); }
+.brand .logo { font-size: 20px; }
+.brand .title { letter-spacing: 0.2px; }
+
+.menu-wrapper { position: relative; margin-left: auto; }
+.hamburger {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.menu {
+  position: absolute;
+  right: 0;
+  margin-top: 8px;
+  min-width: 160px;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+  padding: 6px;
+  display: none;
+}
+.menu.open { display: block; }
+.menu-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.menu-item:hover { background: #f1f5f9; }
+
+/* Login Hamburger Dropdown */
+.login-menu-wrapper {
+  position: relative;
+  margin-left: 12px;
+  display: inline-block;
+}
+.login-hamburger {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.login-menu {
+  position: absolute;
+  left: 0;
+  margin-top: 12px;
+  min-width: 160px;
+  background: #fff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25), 0 2px 8px rgba(15,23,42,0.10);
+  padding: 6px;
+  display: none;
+  z-index: 1001;
+}
+.login-menu.open { display: block; }
+.login-menu .menu-item { width: 100%; text-align: left; background: transparent; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.login-menu .menu-item:hover { background: #f1f5f9; }
+
+@media (max-width: 600px) {
+  .login-menu-wrapper { margin-left: 6px; }
+  .login-menu { min-width: 120px; }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 0;
+  height: calc(100vh - 56px);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+  background: #ffffff;
+  overflow: hidden;
+}
+.sidebar-header { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+.sidebar-header h2 { margin: 0 0 8px 0; font-size: 16px; }
+.sidebar-header input {
+  width: 100%;
+  padding: 8px 10px;
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 16px;
+  background: #0ea5e9;
+  color: white;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+.topbar .login-menu-wrapper {
+  margin-right: auto;
+  margin-left: 0;
+  position: static;
+}
+.topbar .brand {
+  position: static;
+  left: unset;
+  transform: none;
+  margin: 0 auto;
+}
+.topbar .menu-wrapper {
+  margin-left: auto;
+  margin-right: 0;
+  position: static;
+}
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.instrument-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+.instrument-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.instrument-item:hover { background: #f1f5f9; }
+.instrument-item.selected { background: #e0f2fe; border-color: #7dd3fc; }
+.instrument-emoji { font-size: 20px; }
+.instrument-name { font-weight: 500; display: inline; }
+
+.content { padding: 20px; overflow: auto; }
+.hero h1 { margin-top: 0; }
+
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+.chip .remove { cursor: pointer; border: none; background: transparent; }
+
+/* Modal */
+.modal.hidden { display: none; }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.modal-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.3);
+  overflow: hidden;
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; }
+.modal-body { padding: 16px; }
+.icon-btn { background: transparent; border: none; cursor: pointer; font-size: 16px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 80px 1fr; transition: grid-template-columns 0.3s; }
+  .sidebar-header h2 { display: none; }
+  .sidebar-header input { display: none; }
+  .instrument-name { display: none; }
+  .instrument-item.selected .instrument-name { display: inline; }
+  .sidebar.expanded ~ .content,
+  .layout.sidebar-expanded .content {
+    /* No change, just for specificity */
+  }
+  .sidebar.expanded,
+  .layout.sidebar-expanded .sidebar {
+    width: 260px !important;
+    min-width: 260px !important;
+    max-width: 260px !important;
+    transition: width 0.3s;
+  }
+  .sidebar.expanded .sidebar-header h2,
+  .sidebar.expanded .sidebar-header input,
+  .sidebar.expanded .instrument-name,
+  .layout.sidebar-expanded .sidebar-header h2,
+  .layout.sidebar-expanded .sidebar-header input,
+  .layout.sidebar-expanded .instrument-name {
+    display: block !important;
+  }
+  .sidebar.expanded .instrument-item .instrument-name,
+  .layout.sidebar-expanded .instrument-item .instrument-name {
+    display: inline !important;
+  }
+}
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+}
+.fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #0ea5e9;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+}
+.fab-menu {
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+  padding: 6px;
+  display: none;
+  min-width: 160px;
+}
+.fab-menu.open { display: block; }
+.fab-item {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.fab-item:hover { background: #f1f5f9; }
+
+

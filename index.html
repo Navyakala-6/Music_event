@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Events Organisation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="topbar">
+        <!-- Login Hamburger Dropdown (left) -->
+        <div class="login-menu-wrapper">
+            <button class="hamburger login-hamburger" id="loginMenuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open login menu">☰</button>
+            <div class="menu login-menu" id="loginMenu">
+                <button class="menu-item" id="loginBtn">Login</button>
+                <button class="menu-item" id="signupBtn">Signup</button>
+                <button class="menu-item" id="settingsBtn">Settings</button>
+                <button class="menu-item" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+        <div class="brand">
+            <span class="logo">🎵</span>
+            <span class="title">Music Events</span>
+        </div>
+        <!-- Event Hamburger Dropdown (right) -->
+        <div class="menu-wrapper">
+            <button class="hamburger" id="menuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">☰</button>
+            <div class="menu" id="menu">
+                <button class="menu-item" id="liveBandBtn">Live band</button>
+                <button class="menu-item" id="marriageBtn">Marriage</button>
+                <button class="menu-item" id="partyBtn">Party</button>
+                <button class="menu-item" id="familyBtn">Family function</button>
+                <button class="menu-item" id="pubLiveBtn">Pub (live)</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" aria-label="Instrument selector">
+            <div class="sidebar-header">
+                <h2>Instruments</h2>
+                <input type="text" id="instrumentSearch" placeholder="Search instruments" aria-label="Search instruments">
+            </div>
+            <ul class="instrument-list" id="instrumentList" tabindex="0" aria-multiselectable="true">
+                <!-- Items injected by JS -->
+            </ul>
+        </aside>
+
+        <main class="content">
+            <section class="hero">
+                <h1>Plan your perfect music event</h1>
+                <p>Select preferred instruments from the left. Login or signup to save your choices.</p>
+            </section>
+
+            <section class="selection">
+                <h3>Your selected instruments</h3>
+                <div id="selectedChips" class="chips"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Simple modals for login/signup/settings (placeholders) -->
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal</h3>
+                <button class="icon-btn" id="closeModal" aria-label="Close">✖</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Floating action button (bottom-right) -->
+    <div class="fab" id="fab">
+        <button class="fab-btn" id="fabToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open quick menu">●</button>
+        <div class="fab-menu" id="fabMenu">
+            <button class="fab-item" id="suggestionBtn">Suggestion</button>
+            <button class="fab-item" id="helpBtn">Help</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+
