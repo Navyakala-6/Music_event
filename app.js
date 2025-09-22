@@ -201,12 +201,6 @@ function handleTouchStart(e) {
     touchEndX = touchStartX;
   }
 }
-function handleTouchMove(e) {
-  if (!isMobileSidebar()) return;
-  if (e.touches && e.touches.length === 1) {
-    touchEndX = e.touches[0].clientX;
-  }
-}
 function handleTouchEnd() {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
@@ -215,15 +209,14 @@ function handleTouchEnd() {
       sidebar.classList.add('expanded');
       layout.classList.add('sidebar-expanded');
     } else if (dx < -60) { // swipe left to collapse
-      if (sidebar.classList.contains('expanded')) {
-        sidebar.classList.remove('expanded');
-        layout.classList.remove('sidebar-expanded');
-      }
+      sidebar.classList.remove('expanded');
+      layout.classList.remove('sidebar-expanded');
     }
   }
   touchStartX = null;
   touchEndX = null;
 }
+// (removed duplicate erroneous code)
 if (sidebar) {
   sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
   sidebar.addEventListener('touchmove', handleTouchMove, { passive: true });
