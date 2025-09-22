@@ -13,7 +13,12 @@
     <header class="topbar">
         <!-- Login Hamburger Dropdown (left) -->
         <div class="login-menu-wrapper">
-            <button class="hamburger login-hamburger" id="loginMenuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open login menu">☰</button>
+            <button class="hamburger login-hamburger" id="loginMenuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open login menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle">
+                  <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                  <path d="M4 20c0-3.3137 3.134-6 7-6s7 2.6863 7 6" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
             <div class="menu login-menu" id="loginMenu">
                 <button class="menu-item" id="loginBtn">Login</button>
                 <button class="menu-item" id="signupBtn">Signup</button>
@@ -50,15 +55,6 @@
         </aside>
 
         <main class="content">
-            <section class="hero">
-                <h1>Plan your perfect music event</h1>
-                <p>Select preferred instruments from the left. Login or signup to save your choices.</p>
-            </section>
-
-            <section class="selection">
-                <h3>Your selected instruments</h3>
-                <div id="selectedChips" class="chips"></div>
-            </section>
         </main>
     </div>
 
