@@ -199,43 +199,18 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 renderList();
 // renderChips();
 
-// Sidebar expand/collapse button for mobile
-const sidebarToggle = document.getElementById('sidebarToggle');
-const sidebarToggleIcon = document.getElementById('sidebarToggleIcon');
-function updateSidebarToggleVisibility() {
-  if (window.innerWidth <= 900) {
-    sidebarToggle.style.display = 'flex';
-    // Set icon based on state
-    if (sidebar.classList.contains('expanded')) {
-      sidebarToggleIcon.innerHTML = '&larr;'; // left arrow to collapse
-    } else {
-      sidebarToggleIcon.innerHTML = '&#9776;'; // hamburger to expand
-    }
-  } else {
-    sidebarToggle.style.display = 'none';
-  }
-}
-if (sidebarToggle) {
-  sidebarToggle.addEventListener('click', () => {
-    if (sidebar.classList.contains('expanded')) {
-      sidebar.classList.remove('expanded');
-      layout.classList.remove('sidebar-expanded');
-    } else {
-      sidebar.classList.add('expanded');
-      layout.classList.add('sidebar-expanded');
-    }
-    updateSidebarToggleVisibility();
-  });
-}
-window.addEventListener('resize', updateSidebarToggleVisibility);
-window.addEventListener('DOMContentLoaded', updateSidebarToggleVisibility);
 
 
 
-// Mobile sidebar swipe right to expand (show instrument names)
+
+// --- Mobile Sidebar Swipe Logic ---
+// Only swipe gestures (no buttons) control sidebar expand/collapse in mobile view.
+// - Swipe right from left edge (within 20px) expands sidebar if not already expanded.
+// - Swipe left (mostly horizontal) collapses sidebar if expanded.
+// - Minimum swipe distance: 60px. Vertical movement must be < 40px.
+
 const sidebar = document.querySelector('.sidebar');
 const layout = document.querySelector('.layout');
-const content = document.querySelector('.content');
 
 let touchStartX = null;
 let touchStartY = null;
@@ -245,7 +220,6 @@ let touchEndY = null;
 function isMobileSidebar() {
   return window.innerWidth <= 900;
 }
-
 
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
@@ -258,6 +232,7 @@ function handleTouchStart(e) {
     touchEndY = y;
   }
 }
+
 function handleTouchMove(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1 && touchStartX !== null) {
@@ -265,6 +240,7 @@ function handleTouchMove(e) {
     touchEndY = e.touches[0].clientY;
   }
 }
+
 function handleTouchEnd() {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
@@ -272,12 +248,12 @@ function handleTouchEnd() {
     const dy = Math.abs(touchEndY - touchStartY);
     // Only trigger if mostly horizontal swipe
     if (dy < 40) {
-      // Swipe right to open
+      // Swipe right to open (from left edge, not already expanded)
       if (touchStartX < 20 && dx > 60 && !sidebar.classList.contains('expanded')) {
         sidebar.classList.add('expanded');
         layout.classList.add('sidebar-expanded');
       }
-      // Swipe left to close
+      // Swipe left to close (if expanded)
       else if (dx < -60 && sidebar.classList.contains('expanded')) {
         sidebar.classList.remove('expanded');
         layout.classList.remove('sidebar-expanded');
