@@ -215,15 +215,17 @@ function isMobileSidebar() {
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1) {
-    // Only allow swipe right to open if starting near left edge (20px)
-    if (e.target === document.body || e.target === document.documentElement || e.target.classList.contains('content')) {
-      if (e.touches[0].clientX < 20 || sidebar.classList.contains('expanded')) {
-        touchStartX = e.touches[0].clientX;
-        touchEndX = touchStartX;
-      }
-    } else if (sidebar.contains(e.target) || sidebar === e.target) {
+    // Always allow swipe right to open if starting near left edge (20px)
+    if (e.touches[0].clientX < 20) {
       touchStartX = e.touches[0].clientX;
       touchEndX = touchStartX;
+    } else if (sidebar.classList.contains('expanded')) {
+      // Allow swipe left to close if sidebar is expanded, from anywhere in sidebar/content
+      touchStartX = e.touches[0].clientX;
+      touchEndX = touchStartX;
+    } else {
+      touchStartX = null;
+      touchEndX = null;
     }
   }
 }
