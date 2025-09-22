@@ -207,23 +207,14 @@ body {
 .icon-btn { background: transparent; border: none; cursor: pointer; font-size: 16px; }
 
 @media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 80px 1fr;
-    transition: grid-template-columns 0.3s;
-    position: relative;
-  }
-  .sidebar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    z-index: 1002;
-    width: 80px;
-    min-width: 80px;
-    max-width: 80px;
-    transition: width 0.3s;
-    background: #fff;
-    box-shadow: 2px 0 8px rgba(15,23,42,0.08);
+  .layout { grid-template-columns: 80px 1fr; transition: grid-template-columns 0.3s; }
+  .sidebar-header h2 { display: none; }
+  .sidebar-header input { display: none; }
+  .instrument-name { display: none; }
+  .instrument-item.selected .instrument-name { display: inline; }
+  .sidebar.expanded ~ .content,
+  .layout.sidebar-expanded .content {
+    /* No change, just for specificity */
   }
   .sidebar.expanded,
   .layout.sidebar-expanded .sidebar {
@@ -231,12 +222,7 @@ body {
     min-width: 260px !important;
     max-width: 260px !important;
     transition: width 0.3s;
-    box-shadow: 2px 0 16px rgba(15,23,42,0.15);
   }
-  .sidebar-header h2 { display: none; }
-  .sidebar-header input { display: none; }
-  .instrument-name { display: none; }
-  .instrument-item.selected .instrument-name { display: inline; }
   .sidebar.expanded .sidebar-header h2,
   .sidebar.expanded .sidebar-header input,
   .sidebar.expanded .instrument-name,

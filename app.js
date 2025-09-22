@@ -197,25 +197,14 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 
 // Initial render
 renderList();
-// renderChips();
+renderChips();
 
 
-
-
-
-// --- Mobile Sidebar Swipe Logic ---
-// Only swipe gestures (no buttons) control sidebar expand/collapse in mobile view.
-// - Swipe right from left edge (within 20px) expands sidebar if not already expanded.
-// - Swipe left (mostly horizontal) collapses sidebar if expanded.
-// - Minimum swipe distance: 60px. Vertical movement must be < 40px.
-
+// Mobile sidebar swipe right to expand (show instrument names)
 const sidebar = document.querySelector('.sidebar');
 const layout = document.querySelector('.layout');
-
 let touchStartX = null;
-let touchStartY = null;
 let touchEndX = null;
-let touchEndY = null;
 
 function isMobileSidebar() {
   return window.innerWidth <= 900;
@@ -224,52 +213,38 @@ function isMobileSidebar() {
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1) {
-    const x = e.touches[0].clientX;
-    const y = e.touches[0].clientY;
-    touchStartX = x;
-    touchStartY = y;
-    touchEndX = x;
-    touchEndY = y;
+    touchStartX = e.touches[0].clientX;
+    touchEndX = touchStartX;
   }
 }
-
 function handleTouchMove(e) {
   if (!isMobileSidebar()) return;
-  if (e.touches && e.touches.length === 1 && touchStartX !== null) {
+  if (e.touches && e.touches.length === 1) {
     touchEndX = e.touches[0].clientX;
-    touchEndY = e.touches[0].clientY;
   }
 }
-
 function handleTouchEnd() {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
     const dx = touchEndX - touchStartX;
-    const dy = Math.abs(touchEndY - touchStartY);
-    // Only trigger if mostly horizontal swipe
-    if (dy < 40) {
-      // Swipe right to open (from left edge, not already expanded)
-      if (touchStartX < 20 && dx > 60 && !sidebar.classList.contains('expanded')) {
-        sidebar.classList.add('expanded');
-        layout.classList.add('sidebar-expanded');
-      }
-      // Swipe left to close (if expanded)
-      else if (dx < -60 && sidebar.classList.contains('expanded')) {
+    if (dx > 60) { // swipe right
+      sidebar.classList.add('expanded');
+      layout.classList.add('sidebar-expanded');
+    } else if (dx < -60) { // swipe left to collapse
+      if (sidebar.classList.contains('expanded')) {
         sidebar.classList.remove('expanded');
         layout.classList.remove('sidebar-expanded');
       }
     }
   }
   touchStartX = null;
-  touchStartY = null;
   touchEndX = null;
-  touchEndY = null;
 }
-
-document.addEventListener('touchstart', handleTouchStart, { passive: true });
-document.addEventListener('touchmove', handleTouchMove, { passive: true });
-document.addEventListener('touchend', handleTouchEnd, { passive: true });
-
+if (sidebar) {
+  sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
+  sidebar.addEventListener('touchmove', handleTouchMove, { passive: true });
+  sidebar.addEventListener('touchend', handleTouchEnd, { passive: true });
+}
 // Remove expanded state if resizing to desktop
 window.addEventListener('resize', () => {
   if (!isMobileSidebar()) {
