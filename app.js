@@ -200,6 +200,7 @@ renderList();
 renderChips();
 
 
+
 // Mobile sidebar swipe right to expand (show instrument names)
 const sidebar = document.querySelector('.sidebar');
 const layout = document.querySelector('.layout');
@@ -214,13 +215,21 @@ function isMobileSidebar() {
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1) {
-    touchStartX = e.touches[0].clientX;
-    touchEndX = touchStartX;
+    // Only allow swipe right to open if starting near left edge (20px)
+    if (e.target === document.body || e.target === document.documentElement || e.target.classList.contains('content')) {
+      if (e.touches[0].clientX < 20 || sidebar.classList.contains('expanded')) {
+        touchStartX = e.touches[0].clientX;
+        touchEndX = touchStartX;
+      }
+    } else if (sidebar.contains(e.target) || sidebar === e.target) {
+      touchStartX = e.touches[0].clientX;
+      touchEndX = touchStartX;
+    }
   }
 }
 function handleTouchMove(e) {
   if (!isMobileSidebar()) return;
-  if (e.touches && e.touches.length === 1) {
+  if (e.touches && e.touches.length === 1 && touchStartX !== null) {
     touchEndX = e.touches[0].clientX;
   }
 }
@@ -228,10 +237,10 @@ function handleTouchEnd(target) {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
     const dx = touchEndX - touchStartX;
-    if (dx > 60) { // swipe right
+    if (dx > 60 && !sidebar.classList.contains('expanded')) { // swipe right to open
       sidebar.classList.add('expanded');
       layout.classList.add('sidebar-expanded');
-    } else if (dx < -60) { // swipe left to collapse
+    } else if (dx < -60 && sidebar.classList.contains('expanded')) { // swipe left to close
       sidebar.classList.remove('expanded');
       layout.classList.remove('sidebar-expanded');
     }
@@ -239,20 +248,14 @@ function handleTouchEnd(target) {
   touchStartX = null; 
   touchEndX = null;
 }
-if (sidebar) {
-  // Expand/collapse by swiping on sidebar
-  sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
-  sidebar.addEventListener('touchmove', handleTouchMove, { passive: true });
-  sidebar.addEventListener('touchend', function() { handleTouchEnd('sidebar'); }, { passive: true });
-}
-if (content) {
-  // Allow collapse by swiping left on content area if sidebar is expanded
-  content.addEventListener('touchstart', handleTouchStart, { passive: true });
-  content.addEventListener('touchmove', handleTouchMove, { passive: true });
-  content.addEventListener('touchend', function() {
-    if (sidebar.classList.contains('expanded')) handleTouchEnd('content');
-  }, { passive: true });
-}
+
+// Listen for swipe on the whole document for open, and on sidebar/content for close
+document.addEventListener('touchstart', handleTouchStart, { passive: true });
+document.addEventListener('touchmove', handleTouchMove, { passive: true });
+document.addEventListener('touchend', function(e) {
+  handleTouchEnd(e.target);
+}, { passive: true });
+
 // Remove expanded state if resizing to desktop
 window.addEventListener('resize', () => {
   if (!isMobileSidebar()) {
