@@ -203,6 +203,7 @@ renderChips();
 // Mobile sidebar swipe right to expand (show instrument names)
 const sidebar = document.querySelector('.sidebar');
 const layout = document.querySelector('.layout');
+const content = document.querySelector('.content');
 let touchStartX = null;
 let touchEndX = null;
 
@@ -223,7 +224,7 @@ function handleTouchMove(e) {
     touchEndX = e.touches[0].clientX;
   }
 }
-function handleTouchEnd() {
+function handleTouchEnd(target) {
   if (!isMobileSidebar()) return;
   if (touchStartX !== null && touchEndX !== null) {
     const dx = touchEndX - touchStartX;
@@ -235,13 +236,22 @@ function handleTouchEnd() {
       layout.classList.remove('sidebar-expanded');
     }
   }
-  touchStartX = null;
+  touchStartX = null; 
   touchEndX = null;
 }
 if (sidebar) {
+  // Expand/collapse by swiping on sidebar
   sidebar.addEventListener('touchstart', handleTouchStart, { passive: true });
   sidebar.addEventListener('touchmove', handleTouchMove, { passive: true });
-  sidebar.addEventListener('touchend', handleTouchEnd, { passive: true });
+  sidebar.addEventListener('touchend', function() { handleTouchEnd('sidebar'); }, { passive: true });
+}
+if (content) {
+  // Allow collapse by swiping left on content area if sidebar is expanded
+  content.addEventListener('touchstart', handleTouchStart, { passive: true });
+  content.addEventListener('touchmove', handleTouchMove, { passive: true });
+  content.addEventListener('touchend', function() {
+    if (sidebar.classList.contains('expanded')) handleTouchEnd('content');
+  }, { passive: true });
 }
 // Remove expanded state if resizing to desktop
 window.addEventListener('resize', () => {
