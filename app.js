@@ -246,14 +246,15 @@ function isMobileSidebar() {
 function handleTouchStart(e) {
   if (!isMobileSidebar()) return;
   if (e.touches && e.touches.length === 1) {
-    // Always allow swipe right to open if starting near left edge (20px)
-    if (e.touches[0].clientX < 20) {
-      touchStartX = e.touches[0].clientX;
-      touchEndX = touchStartX;
+    const x = e.touches[0].clientX;
+    // Only allow swipe right to open if starting near left edge and sidebar is not expanded
+    if (x < 20 && !sidebar.classList.contains('expanded')) {
+      touchStartX = x;
+      touchEndX = x;
     } else if (sidebar.classList.contains('expanded')) {
-      // Allow swipe left to close if sidebar is expanded, from anywhere in sidebar/content
-      touchStartX = e.touches[0].clientX;
-      touchEndX = touchStartX;
+      // Allow swipe left to close if sidebar is expanded, from anywhere
+      touchStartX = x;
+      touchEndX = x;
     } else {
       touchStartX = null;
       touchEndX = null;
