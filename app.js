@@ -25,7 +25,7 @@ const state = {
 
 const listEl = document.getElementById('instrumentList');
 const searchEl = document.getElementById('instrumentSearch');
-const chipsEl = document.getElementById('selectedChips');
+
 const menuToggle = document.getElementById('menuToggle');
 const menu = document.getElementById('menu');
 const fabToggle = document.getElementById('fabToggle');
@@ -54,22 +54,7 @@ function renderList() {
   });
 }
 
-function renderChips() {
-  chipsEl.innerHTML = '';
-  [...state.selected].forEach(id => {
-    const inst = instruments.find(i => i.id === id);
-    if (!inst) return;
-    const chip = document.createElement('div');
-    chip.className = 'chip';
-    chip.innerHTML = `${inst.emoji} ${inst.name} <button class="remove" aria-label="Remove ${inst.name}">✖</button>`;
-    chip.querySelector('.remove').addEventListener('click', () => {
-      state.selected.delete(inst.id);
-      renderList();
-      renderChips();
-    });
-    chipsEl.appendChild(chip);
-  });
-}
+
 
 listEl.addEventListener('click', (e) => {
   const li = e.target.closest('.instrument-item');
@@ -77,7 +62,6 @@ listEl.addEventListener('click', (e) => {
   const id = li.getAttribute('data-id');
   if (state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
   renderList();
-  renderChips();
 });
 
 searchEl.addEventListener('input', (e) => {
@@ -195,9 +179,9 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 });
 
 
+
 // Initial render
 renderList();
-renderChips();
 
 
 // Mobile sidebar swipe right to expand (show instrument names)

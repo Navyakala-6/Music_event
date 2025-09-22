@@ -166,7 +166,11 @@ body {
   border: 1px solid transparent;
 }
 .instrument-item:hover { background: #f1f5f9; }
-.instrument-item.selected { background: #e0f2fe; border-color: #7dd3fc; }
+.instrument-item.selected {
+  background: #bae6fd !important;
+  border-color: #0ea5e9 !important;
+  transition: background 0.2s, border-color 0.2s;
+}
 .instrument-emoji { font-size: 20px; }
 .instrument-name { font-weight: 500; display: inline; }
 
