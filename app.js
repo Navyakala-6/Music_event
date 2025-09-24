@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Mobile sidebar swipe logic (attach listeners outside dropdown logic)
+  // Mobile sidebar swipe logic (attach listeners to main content area for global swipe)
   let touchStartX = null;
   let touchEndX = null;
   const sidebar = document.querySelector('.sidebar');
@@ -64,16 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
     touchStartX = null;
     touchEndX = null;
   }
-  // Attach listeners to sidebar toggle bar and sidebar for swipe detection
-  if (sidebarBarToggle) {
-    sidebarBarToggle.addEventListener('touchstart', handleTouchStart);
-    sidebarBarToggle.addEventListener('touchmove', handleTouchMove);
-    sidebarBarToggle.addEventListener('touchend', handleTouchEnd);
-  }
-  if (sidebar) {
-    sidebar.addEventListener('touchstart', handleTouchStart);
-    sidebar.addEventListener('touchmove', handleTouchMove);
-    sidebar.addEventListener('touchend', handleTouchEnd);
+  // Attach listeners to main content area for swipe detection
+  const mainContent = document.querySelector('main.content');
+  if (mainContent) {
+    mainContent.addEventListener('touchstart', handleTouchStart);
+    mainContent.addEventListener('touchmove', handleTouchMove);
+    mainContent.addEventListener('touchend', handleTouchEnd);
   }
 
   // Login dropdown logic
