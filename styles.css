@@ -41,36 +41,44 @@ body {
 }
 
 
-.music-bg {
+/* Bottom boxes start from right edge of sidebar */
+/* Bottom boxes: desktop start from sidebar, mobile full width */
+.bottom-boxes {
   position: fixed;
-  left: 0;
-  top: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
+  left: 260px;
+  bottom: 0;
+  width: calc(100vw - 260px);
+  height: 80px;
+  display: flex;
+  z-index: 1003;
+  margin: 0;
+  padding: 0;
 }
-
-.music-symbol {
-  position: absolute;
-  font-size: 3rem;
-  opacity: 0.18;
-  user-select: none;
-  animation: floatRandom 12s linear infinite;
+@media (max-width: 900px) {
+  .bottom-boxes {
+    left: 0;
+    width: 100vw;
+  }
 }
-
-/* Each symbol gets a different animation delay and direction for randomness */
-.music-symbol:nth-child(1) { animation-delay: 0s; animation-duration: 13s; }
-.music-symbol:nth-child(2) { animation-delay: 2s; animation-duration: 11s; }
-.music-symbol:nth-child(3) { animation-delay: 4s; animation-duration: 15s; }
-.music-symbol:nth-child(4) { animation-delay: 1s; animation-duration: 12s; }
-.music-symbol:nth-child(5) { animation-delay: 3s; animation-duration: 14s; }
-.music-symbol:nth-child(6) { animation-delay: 5s; animation-duration: 10s; }
-.music-symbol:nth-child(7) { animation-delay: 2.5s; animation-duration: 16s; }
-.music-symbol:nth-child(8) { animation-delay: 6s; animation-duration: 12s; }
-.music-symbol:nth-child(9) { animation-delay: 1.5s; animation-duration: 13s; }
-.music-symbol:nth-child(10) { animation-delay: 3.5s; animation-duration: 11s; }
-.music-symbol:nth-child(11) { animation-delay: 7s; animation-duration: 15s; }
+.number-box {
+  flex: 1 1 20%;
+  height: 100%;
+  background: #232326;
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 600;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  border-right: 1px solid #444;
+  margin: 0;
+  padding: 0;
+}
+.number-box:last-child {
+  border-right: none;
+}
 .music-symbol:nth-child(12) { animation-delay: 4.5s; animation-duration: 12s; }
 .music-symbol:nth-child(13) { animation-delay: 8s; animation-duration: 14s; }
 .music-symbol:nth-child(14) { animation-delay: 5.5s; animation-duration: 10s; }
@@ -134,14 +142,10 @@ body {
   font-size: 28px;
 }
 .brand .title {
-  font-family: 'Lucida Handwriting', cursive;
+  font-family: serif;
   font-size: 2.6rem;
   letter-spacing: 1.5px;
-  background: linear-gradient(90deg, #f472b6, #60a5fa, #34d399, #fbbf24);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
+  color: #fff;
   text-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 
@@ -305,7 +309,8 @@ body {
 .fab {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: 96px;
+  z-index: 1004;
 }
 .fab-btn {
   width: 56px;
