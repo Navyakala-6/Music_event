@@ -35,7 +35,52 @@ document.addEventListener('DOMContentLoaded', function() {
   const loginMenuToggle = document.getElementById('loginMenuToggle');
   const loginMenu = document.getElementById('loginMenu');
   if (loginMenuToggle && loginMenu) {
-    loginMenuToggle.addEventListener('click', function(e) {
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile sidebar swipe logic
+      let touchStartX = null;
+      let touchEndX = null;
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarBarToggle = document.getElementById('sidebarBarToggle');
+      function handleTouchStart(e) {
+        if (e.touches && e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+        }
+      }
+      function handleTouchMove(e) {
+        if (e.touches && e.touches.length === 1) {
+          touchEndX = e.touches[0].clientX;
+        }
+      }
+      function handleTouchEnd() {
+        if (touchStartX !== null && touchEndX !== null) {
+          const diff = touchEndX - touchStartX;
+          // Swipe right to expand sidebar
+          if (diff > 60 && window.innerWidth <= 900) {
+            sidebar.classList.add('expanded');
+            if (sidebarBarToggle) sidebarBarToggle.classList.add('hide');
+          }
+          // Swipe left to collapse sidebar
+          if (diff < -60 && window.innerWidth <= 900) {
+            sidebar.classList.remove('expanded');
+            if (sidebarBarToggle) sidebarBarToggle.classList.remove('hide');
+          }
+        }
+        touchStartX = null;
+        touchEndX = null;
+      }
+      // Attach listeners to main content area for swipe detection
+      const mainContent = document.querySelector('main.content');
+      if (mainContent) {
+        mainContent.addEventListener('touchstart', handleTouchStart);
+        mainContent.addEventListener('touchmove', handleTouchMove);
+        mainContent.addEventListener('touchend', handleTouchEnd);
+      }
+      // Also allow swipe on sidebar toggle bar
+      if (sidebarBarToggle) {
+        sidebarBarToggle.addEventListener('touchstart', handleTouchStart);
+        sidebarBarToggle.addEventListener('touchmove', handleTouchMove);
+        sidebarBarToggle.addEventListener('touchend', handleTouchEnd);
+      }
       e.stopPropagation();
       const isOpen = loginMenu.classList.toggle('open');
       loginMenuToggle.setAttribute('aria-expanded', String(isOpen));
