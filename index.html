@@ -6,13 +6,36 @@
     <title>Music Events Organisation</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <!-- Modal styles (minimal, injected) -->
+    <style>
+    .hidden{display:none}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .modal-card{background:#fff;border-radius:10px;max-width:420px;width:92%;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,0.2);font-family:inherit}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .modal-header h3{margin:0;font-size:1.1rem}
+    .icon-btn{background:transparent;border:none;font-size:1.1rem;cursor:pointer}
+    .modal-body label{display:block;font-size:0.85rem;margin:10px 0 6px}
+    .modal-body input{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:6px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .btn-primary{background:#2727ff;color:#fff}
+    .btn-secondary{background:#f1f1f1}
+    @media (max-width:480px){.modal-card{padding:14px}}
+    /* Login popover styles */
+    .login-popover{position:fixed;z-index:10010;display:flex;align-items:flex-start;justify-content:flex-start}
+    .login-popover.hidden{display:none}
+    .popover-card{background:#fff;color:#111;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,0.25);width:300px;max-width:84vw;padding:10px}
+    .popover-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .popover-body label{display:block;font-size:0.85rem;margin:6px 0}
+    .popover-body input{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px}
+    @media (max-width:480px){.popover-card{width:92vw}}
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-        
-        <header class="topbar">
+    <header class="topbar">
         <!-- Login Hamburger Dropdown (left) -->
         <div class="login-menu-wrapper">
             <button class="hamburger login-hamburger" id="loginMenuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu">👤</button>
@@ -25,7 +48,7 @@
         </div>
         <div class="brand">
             <span class="logo">🎵</span>
-            <span class="title">Music Events</span>
+            <span class="title">OohM Event's</span>
         </div>
         <!-- Event Hamburger Dropdown (right) -->
         <div class="menu-wrapper">
@@ -54,20 +77,32 @@
         </aside>
 
         <main class="content">
-
-
-
         </main>
     </div>
 
-    <!-- Simple modals for login/signup/settings (placeholders) -->
-    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-card">
+    <!-- Modal backdrop (single instance) -->
+    <div id="modalBackdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-card" role="document">
             <div class="modal-header">
                 <h3 id="modalTitle">Modal</h3>
                 <button class="icon-btn" id="closeModal" aria-label="Close">✖</button>
             </div>
-            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be injected by script (login / signup forms) -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Login popover (anchored small popup) -->
+    <div id="loginPopover" class="login-popover hidden" role="dialog" aria-modal="false" aria-labelledby="loginPopoverTitle">
+        <div class="popover-card">
+            <div class="popover-header">
+                <strong id="loginPopoverTitle">Login</strong>
+                <button class="icon-btn" id="closePopover" aria-label="Close">✖</button>
+            </div>
+            <div class="popover-body" id="loginPopoverBody">
+                <!-- content injected by script -->
+            </div>
         </div>
     </div>
 
@@ -80,18 +115,417 @@
         </div>
     </div>
 
-        <script src="app.js"></script>
-        <!-- Numbered boxes at bottom -->
-            <div class="bottom-boxes">
-                <div class="number-box">1</div>
-                <div class="number-box">2</div>
-                <div class="number-box">3</div>
-                <div class="number-box">4</div>
-                <div class="number-box">5</div>
-            </div>
-</body>
-</html>
+    <script src="app.js"></script>
+        <script>
+        (function(){
+                const modalBackdrop = document.getElementById('modalBackdrop');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const loginPopover = document.getElementById('loginPopover');
+                const loginPopoverBody = document.getElementById('loginPopoverBody');
+                const loginMenuToggle = document.getElementById('loginMenuToggle');
 
+                if(modalBackdrop){
+                        modalBackdrop.classList.add('hidden');
+                        modalBackdrop.style.display = 'none';
+                }
+                if(loginPopover){
+                        loginPopover.classList.add('hidden');
+                        loginPopover.style.display = 'none';
+                        loginPopover.style.left = '0px';
+                        loginPopover.style.top = '0px';
+                }
+
+                function showModal(mode){
+                                if(!modalBackdrop || !modalBody) return;
+                                modalBackdrop.style.display = '';
+                                modalBackdrop.classList.remove('hidden');
+                                document.body.style.overflow = 'hidden';
+                                if(mode === 'signup'){
+                                        modalTitle.textContent = 'Create account';
+                                        modalBody.innerHTML = `
+                                                <form id="signupForm">
+                                                    <div>
+                                                        <label for="signupName">Full name</label>
+                                                        <input id="signupName" name="signupName" type="text" placeholder="Your full name" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="signupEmail">Email</label>
+                                                        <input id="signupEmail" name="signupEmail" type="email" placeholder="you@example.com" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="signupPassword">Set password</label>
+                                                        <input id="signupPassword" name="signupPassword" type="password" placeholder="Create password" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="signupConfirm">Confirm password</label>
+                                                        <input id="signupConfirm" name="signupConfirm" type="password" placeholder="Confirm password" required>
+                                                    </div>
+                                                    <div class="modal-actions">
+                                                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary" id="signupSubmit">Signup</button>
+                                                    </div>
+                                                </form>
+                                        `;
+                                } else if(mode === 'login'){
+                                        modalTitle.textContent = 'Login';
+                                        modalBody.innerHTML = `
+                                                <form id="loginForm">
+                                                    <div>
+                                                        <label for="loginName">Full name</label>
+                                                        <input id="loginName" name="loginName" type="text" placeholder="Your full name" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="loginEmail">Email</label>
+                                                        <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="loginPassword">Password</label>
+                                                        <input id="loginPassword" name="loginPassword" type="password" placeholder="Password" required>
+                                                    </div>
+                                                    <div class="modal-actions">
+                                                        <button type="button" class="btn btn-secondary" id="forgotPwdBtn">Forgot password</button>
+                                                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary" id="loginSubmit">Login</button>
+                                                    </div>
+                                                </form>
+                                        `;
+                                }
+                                const firstInput = modalBody.querySelector('input');
+                                if(firstInput) firstInput.focus();
+                        }
+
+                function hideModal(){
+                        if(!modalBackdrop) return;
+                        modalBackdrop.classList.add('hidden');
+                        modalBackdrop.style.display = 'none';
+                        document.body.style.overflow = '';
+                        modalBody.innerHTML = '';
+                }
+
+                function showPopover(){
+                    console.log('showPopover called');
+                    if(!loginPopover || !loginPopoverBody || !loginMenuToggle) { console.log('popover elements missing'); return; }
+                        // inject form
+                        loginPopoverBody.innerHTML = `
+                            <form id="loginPopoverForm">
+                                <div>
+                                    <label for="loginName">Full name</label>
+                                    <input id="loginName" name="loginName" type="text" placeholder="Your full name" value="GitHub Copilot">
+                                </div>
+                                <div>
+                                    <label for="loginEmail">Email</label>
+                                    <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required>
+                                </div>
+                                <div>
+                                    <label for="loginPassword">Password</label>
+                                    <input id="loginPassword" name="loginPassword" type="password" placeholder="Password" required>
+                                </div>
+                                <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+                                    <button type="button" class="btn btn-secondary" id="forgotPwdBtn">Forgot</button>
+                                    <button type="button" class="btn btn-secondary" id="closePopoverBtn">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" id="loginPopoverSubmit">Login</button>
+                                </div>
+                            </form>
+                        `;
+                        // position popover near the profile button after paint (ensure width is measured correctly)
+                        loginPopover.style.display = 'flex';
+                        loginPopover.classList.remove('hidden');
+                        requestAnimationFrame(function(){
+                            const rect = loginMenuToggle.getBoundingClientRect();
+                            const pop = loginPopover.querySelector('.popover-card');
+                            // default position below and aligned to left edge of button
+                            let left = rect.left;
+                            let top = rect.bottom + 8;
+                            const popWidth = pop ? pop.offsetWidth : 300;
+                            if(left + popWidth > window.innerWidth - 8) left = window.innerWidth - popWidth - 8;
+                            if(left < 8) left = 8;
+                            loginPopover.style.left = left + 'px';
+                            loginPopover.style.top = top + 'px';
+                            const firstInput = loginPopover.querySelector('input');
+                            if(firstInput) firstInput.focus();
+                            console.log('popover positioned', { left, top, popWidth });
+                        });
+                }
+
+                function hidePopover(){
+                        if(!loginPopover) return;
+                        loginPopover.classList.add('hidden');
+                        loginPopover.style.display = 'none';
+                        loginPopoverBody.innerHTML = '';
+                }
+
+        // --- Simple client-side user storage (localStorage) ---
+        function getUsers(){
+            try{
+                const raw = localStorage.getItem('me_users') || '[]';
+                return JSON.parse(raw);
+            }catch(e){ return []; }
+        }
+        function saveUsers(users){
+            try{ localStorage.setItem('me_users', JSON.stringify(users||[])); }catch(e){}
+        }
+        function findUserByEmail(email){
+            if(!email) return null;
+            const users = getUsers();
+            return users.find(u => (u.email||'').toLowerCase() === email.toLowerCase()) || null;
+        }
+        function createUser(user){
+            const users = getUsers();
+            users.push(user);
+            saveUsers(users);
+        }
+        function setCurrentUser(user){
+            try{ localStorage.setItem('me_current', JSON.stringify(user||null)); }catch(e){}
+        }
+        function getCurrentUser(){
+            try{ return JSON.parse(localStorage.getItem('me_current')); }catch(e){ return null; }
+        }
+
+        // --- Password reset token helpers ---
+        function getResetTokens(){
+            try{ return JSON.parse(localStorage.getItem('me_reset_tokens')||'[]'); }catch(e){ return []; }
+        }
+        function saveResetTokens(tokens){
+            try{ localStorage.setItem('me_reset_tokens', JSON.stringify(tokens||[])); }catch(e){}
+        }
+        function createResetToken(email, ttlMs){
+            ttlMs = ttlMs || (1000 * 60 * 60); // 1 hour default
+            const token = Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+            const expires = Date.now() + ttlMs;
+            const tokens = getResetTokens();
+            tokens.push({ token: token, email: email, expires: expires });
+            saveResetTokens(tokens);
+            return token;
+        }
+        function consumeResetToken(token){
+            if(!token) return null;
+            const tokens = getResetTokens();
+            const idx = tokens.findIndex(t => t.token === token);
+            if(idx === -1) return null;
+            const entry = tokens[idx];
+            // remove it (single-use)
+            tokens.splice(idx,1);
+            saveResetTokens(tokens);
+            if(entry.expires && Date.now() > entry.expires) return null;
+            return entry.email;
+        }
+
+        // --- Forgot password flow (opens Gmail compose or mailto as a demo) ---
+        function handleForgotPassword(prefillEmail){
+            // try derive email from modal/popover inputs if not provided
+            let email = (prefillEmail||'').trim();
+            if(!email){
+                const e1 = document.getElementById('loginEmail') || document.getElementById('signupEmail');
+                if(e1 && e1.value) email = e1.value.trim();
+            }
+            if(!email) email = window.prompt('Enter your account email to receive a reset link:');
+            if(!email) return alert('Email is required to send a reset link.');
+            const user = findUserByEmail(email);
+            if(!user) return alert('No account found with that email.');
+            const token = createResetToken(email);
+            // build reset URL (demo: current origin + path + query)
+            const base = location.origin && location.pathname ? (location.origin + location.pathname) : location.href.split('#')[0].split('?')[0];
+            const resetUrl = base + '?reset=' + encodeURIComponent(token);
+            const subject = 'Reset your Music Events password';
+            const body = 'Hi ' + (user.name||'') + ',\n\nClick the link below to reset your password (demo):\n\n' + resetUrl + '\n\nIf you did not request this, ignore this message.';
+            // Prefer Gmail web compose if available
+            const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            try{
+                window.open(gmailUrl, '_blank');
+                alert('Opened Gmail compose window (or a new tab). If it did not open, your browser may block popups — a mail draft will be attempted instead.');
+            }catch(e){
+                // fallback to mailto
+                window.location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+            }
+        }
+
+        // If page loaded with ?reset=token, show reset form modal
+        (function checkForResetTokenOnLoad(){
+            try{
+                const params = new URLSearchParams(window.location.search);
+                const token = params.get('reset');
+                if(!token) return;
+                // show modal with reset form
+                const email = (getResetTokens().find(t => t.token === token) || {}).email || '';
+                showModal('reset');
+                // render reset form into modalBody
+                modalTitle.textContent = 'Reset password';
+                modalBody.innerHTML = `
+                    <form id="resetForm">
+                        <div>
+                            <label for="resetEmail">Account email</label>
+                            <input id="resetEmail" name="resetEmail" type="email" value="${email}" readonly>
+                        </div>
+                        <div>
+                            <label for="resetPassword">New password</label>
+                            <input id="resetPassword" name="resetPassword" type="password" placeholder="New password" required>
+                        </div>
+                        <div>
+                            <label for="resetConfirm">Confirm password</label>
+                            <input id="resetConfirm" name="resetConfirm" type="password" placeholder="Confirm password" required>
+                        </div>
+                        <input type="hidden" id="resetToken" name="resetToken" value="${token}">
+                        <div class="modal-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="resetSubmit">Reset password</button>
+                        </div>
+                    </form>
+                `;
+                const firstInput = modalBody.querySelector('input');
+                if(firstInput) firstInput.focus();
+            }catch(e){ /* ignore */ }
+        })();
+
+                        // Delegated click handlers: Signup opens modal; other generic handlers
+                        document.addEventListener('click', function(e){
+                                const target = e.target;
+                                if(!target) return;
+                                if(target.matches('#signupBtn')){ e.preventDefault(); showModal('signup'); return; }
+                                if(target.matches('#closeModal') || target.matches('#cancelBtn')){ e.preventDefault(); hideModal(); hidePopover(); return; }
+                                if(target.matches('#closePopover') || target.matches('#closePopoverBtn')){ e.preventDefault(); hidePopover(); return; }
+                                if(target.matches('#forgotPwdBtn')){ e.preventDefault(); handleForgotPassword(); return; }
+                        }, true);
+
+                        // Attach a direct click handler to the login button to open the popover (keep dropdown open)
+                        const directLoginBtn = document.getElementById('loginBtn');
+                        if(directLoginBtn) {
+                            // attach in capture phase to ensure this runs before some global handlers
+                directLoginBtn.addEventListener('click', function(e){
+                    console.log('direct loginBtn clicked (capture)');
+                    // prevent other handlers from interfering
+                    e.preventDefault();
+                    e.stopPropagation();
+                    // ensure dropdown remains open: if the menu is closed, open it
+                    try {
+                        const lm = document.getElementById('loginMenu');
+                        if (lm && !lm.classList.contains('open')) lm.classList.add('open');
+                    } catch(_){}
+                    // open centered modal for login (match signup behavior)
+                    showModal('login');
+                }, true);
+                            // also open on mousedown to run before any click-induced menu toggles
+                            directLoginBtn.addEventListener('mousedown', function(e){
+                                console.log('direct loginBtn mousedown');
+                                try {
+                                    const lm = document.getElementById('loginMenu');
+                                    if (lm && !lm.classList.contains('open')) lm.classList.add('open');
+                                } catch(_){ }
+                                // do not prevent default here so menu item behaves normally
+                                showModal('login');
+                            }, true);
+                            // also add a fallback non-capture listener
+                            directLoginBtn.addEventListener('click', function(e){
+                                console.log('direct loginBtn clicked (bubble)');
+                            });
+                        }
+                                // Also make the profile icon open the popover directly (prevent dropdown toggle)
+                                                // Keep the profile icon behavior unchanged: it toggles the dropdown via existing app.js logic
+
+                // click outside popover should close it
+                document.addEventListener('click', function(e){
+                        if(!loginPopover) return;
+                        if(!loginPopover.classList.contains('hidden')){
+                                const isInside = loginPopover.contains(e.target) || (loginMenuToggle && loginMenuToggle.contains(e.target));
+                                if(!isInside) hidePopover();
+                        }
+                }, false);
+
+                // ESC key
+                document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ hideModal(); hidePopover(); } });
+
+                // Backdrop clicks close modal
+                if(modalBackdrop){
+                        modalBackdrop.addEventListener('click', function(e){ if(e.target === modalBackdrop) hideModal(); });
+                }
+
+        // Handle form submissions for popover, modal signup and modal login
+        document.addEventListener('submit', function(e){
+            const form = e.target;
+            if(!form) return;
+            // Login from popover
+            if(form.id === 'loginPopoverForm'){
+                e.preventDefault();
+                const name = (document.getElementById('loginName')||{}).value || '';
+                const email = (document.getElementById('loginEmail')||{}).value || '';
+                const pwd = (document.getElementById('loginPassword')||{}).value || '';
+                if(!email || !pwd){ alert('Please enter email and password'); return; }
+                const user = findUserByEmail(email);
+                if(!user){ alert('No account found with that email. Please signup first.'); return; }
+                if(user.password !== pwd){ alert('Credentials do not match.'); return; }
+                setCurrentUser({ name: user.name, email: user.email });
+                alert('Login successful! Welcome ' + (user.name||user.email));
+                console.log('Popover login submitted', { name, email });
+                hidePopover();
+                return;
+            }
+            // Signup modal
+            if(form.id === 'signupForm'){
+                e.preventDefault();
+                const name = (document.getElementById('signupName')||{}).value || '';
+                const email = (document.getElementById('signupEmail')||{}).value || '';
+                const pwd = (document.getElementById('signupPassword')||{}).value || '';
+                const conf = (document.getElementById('signupConfirm')||{}).value || '';
+                if(!name || !email || !pwd || !conf){ alert('Please fill all fields'); return; }
+                if(pwd !== conf){ alert('Passwords do not match'); return; }
+                // check duplicate
+                if(findUserByEmail(email)){ alert('An account with this email already exists. Please login.'); return; }
+                createUser({ name: name, email: email, password: pwd });
+                alert('Account created successfully. You can now login.');
+                console.log('Signup created', { name, email });
+                hideModal();
+                return;
+            }
+            // Login modal (centered)
+            if(form.id === 'loginForm'){
+                e.preventDefault();
+                const name = (document.getElementById('loginName')||{}).value || '';
+                const email = (document.getElementById('loginEmail')||{}).value || '';
+                const pwd = (document.getElementById('loginPassword')||{}).value || '';
+                if(!email || !pwd){ alert('Please enter email and password'); return; }
+                const user = findUserByEmail(email);
+                if(!user){ alert('No account found with that email. Please signup first.'); return; }
+                if(user.password !== pwd){ alert('Credentials do not match.'); return; }
+                setCurrentUser({ name: user.name, email: user.email });
+                alert('Login successful! Welcome ' + (user.name||user.email));
+                console.log('Modal login submitted', { name, email });
+                hideModal();
+                return;
+            }
+            // Reset form
+            if(form.id === 'resetForm'){
+                e.preventDefault();
+                const token = (document.getElementById('resetToken')||{}).value || '';
+                const email = consumeResetToken(token);
+                if(!email){ alert('Reset link is invalid or expired.'); return; }
+                const pwd = (document.getElementById('resetPassword')||{}).value || '';
+                const conf = (document.getElementById('resetConfirm')||{}).value || '';
+                if(!pwd || !conf){ alert('Please fill both password fields'); return; }
+                if(pwd !== conf){ alert('Passwords do not match'); return; }
+                // update user
+                const users = getUsers();
+                const idx = users.findIndex(u => (u.email||'').toLowerCase() === (email||'').toLowerCase());
+                if(idx === -1){ alert('No account found.'); return; }
+                users[idx].password = pwd;
+                saveUsers(users);
+                alert('Password has been reset. You can now login with your new password.');
+                hideModal();
+                // clean ?reset= from URL
+                try{ const url = new URL(window.location); url.searchParams.delete('reset'); window.history.replaceState({}, document.title, url.toString()); }catch(e){}
+                return;
+            }
+        }, true);
+        })();
+        </script>
+
+    <!-- Numbered boxes at bottom -->
+    <div class="bottom-boxes">
+        <div class="number-box">1</div>
+        <div class="number-box">2</div>
+        <div class="number-box">3</div>
+        <div class="number-box">4</div>
+        <div class="number-box">5</div>
+    </div>
 
     <!-- Musical symbols background -->
     <div class="music-bg">
@@ -99,12 +533,12 @@
         <span class="music-symbol" style="top:18%;left:77%;">🎶</span>
         <span class="music-symbol" style="top:62%;left:8%;">🎷</span>
         <span class="music-symbol" style="top:73%;left:68%;">🎸</span>
-        <span class="music-symbol" style="top:41%;left:53%;">🥁</span>
-        <span class="music-symbol" style="top:81%;left:27%;">🎺</span>
+        <span class="music-symbol" style="top:41%;left:53%;">🪗</span>
+        <span class="music-symbol" style="top:81%;left:27%;">🎹</span>
         <span class="music-symbol" style="top:33%;left:63%;">🎻</span>
-        <span class="music-symbol" style="top:52%;left:88%;">🎤</span>
-        <span class="music-symbol" style="top:15%;left:35%;">🪗</span>
-        <span class="music-symbol" style="top:85%;left:55%;">🪕</span>
+        <span class="music-symbol" style="top:52%;left:88%;">🎺</span>
+        <span class="music-symbol" style="top:15%;left:35%;">🎺</span>
+        <span class="music-symbol" style="top:85%;left:55%;">🥁</span>
         <span class="music-symbol" style="top:25%;left:15%;">🪈</span>
         <span class="music-symbol" style="top:60%;left:80%;">🎼</span>
         <span class="music-symbol" style="top:10%;left:90%;">🎶</span>
@@ -116,5 +550,7 @@
         <span class="music-symbol" style="top:20%;left:50%;">🎤</span>
         <span class="music-symbol" style="top:60%;left:60%;">🪗</span>
     </div>
+</body>
+</html>
 
 
