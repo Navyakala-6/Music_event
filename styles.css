@@ -121,6 +121,48 @@ body {
   }
 }
 
+/* Desktop-only animated musical background */
+@media (min-width: 901px) {
+  .music-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1; /* behind UI */
+  }
+  .music-symbol {
+    position: absolute;
+    font-size: 36px;
+    opacity: 0.14;
+    transform-origin: center center;
+    /* apply floating animation only on desktop */
+    animation-name: floatRandom;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-duration: 12s;
+    animation-delay: 0s;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.45));
+  }
+  /* slight variance for odd/even items */
+  .music-symbol:nth-child(odd) { animation-duration: 10s; }
+  .music-symbol:nth-child(even) { animation-duration: 14s; }
+  /* extra symbols visible only on desktop */
+  .music-symbol.extra { display: inline-block; }
+  .music-symbol.extra-top-left { display: inline-block; font-size: 40px; }
+  /* variable-driven random float animation with multiple waypoints */
+  @keyframes floatVar {
+    0% { transform: translate(var(--x0,0px), var(--y0,0px)) rotate(var(--r0,0deg)); opacity: 0.12; }
+    25% { transform: translate(var(--x1,0px), var(--y1,0px)) rotate(var(--r1,0deg)); opacity: 0.20; }
+    50% { transform: translate(var(--x2,0px), var(--y2,0px)) rotate(var(--r2,0deg)); opacity: 0.16; }
+    75% { transform: translate(var(--x3,0px), var(--y3,0px)) rotate(var(--r3,0deg)); opacity: 0.22; }
+    100% { transform: translate(var(--x4,0px), var(--y4,0px)) rotate(var(--r4,0deg)); opacity: 0.12; }
+  }
+}
+/* hide extra symbols on smaller screens */
+@media (max-width: 900px) {
+  .music-symbol.extra { display: none !important; }
+  .music-symbol.extra-top-left { display: none !important; }
+}
 .topbar {
   position: sticky;
   top: 0;

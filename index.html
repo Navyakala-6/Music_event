@@ -456,7 +456,68 @@
         <span class="music-symbol" style="top:80%;left:70%;">🎻</span>
         <span class="music-symbol" style="top:20%;left:50%;">🎤</span>
         <span class="music-symbol" style="top:60%;left:60%;">🪗</span>
+        <!-- extra desktop-only symbols to reduce blank space -->
+        <span class="music-symbol extra" style="top:12%;left:48%">🎵</span>
+        <span class="music-symbol extra" style="top:22%;left:70%">🎶</span>
+        <span class="music-symbol extra" style="top:35%;left:30%">🎷</span>
+        <span class="music-symbol extra" style="top:45%;left:78%">🎸</span>
+        <span class="music-symbol extra" style="top:55%;left:20%">🎺</span>
+        <span class="music-symbol extra" style="top:65%;left:50%">🎻</span>
+        <span class="music-symbol extra" style="top:75%;left:85%">🥁</span>
+        <span class="music-symbol extra" style="top:28%;left:58%">🎹</span>
+        <span class="music-symbol extra" style="top:8%;left:82%">🎤</span>
+        <span class="music-symbol extra" style="top:82%;left:38%">🪈</span>
+        <span class="music-symbol extra" style="top:50%;left:12%">🎼</span>
+        <!-- extra symbols concentrated toward top-left of main area -->
+        <span class="music-symbol extra-top-left" style="top:6%;left:28%">🎵</span>
+        <span class="music-symbol extra-top-left" style="top:10%;left:34%">🎶</span>
+        <span class="music-symbol extra-top-left" style="top:14%;left:22%">🎷</span>
+        <span class="music-symbol extra-top-left" style="top:18%;left:40%">🎸</span>
+        <span class="music-symbol extra-top-left" style="top:4%;left:48%">🥁</span>
     </div>
+        <script>
+        // Randomize desktop symbol motion using CSS variables
+                (function(){
+                    if(window.matchMedia && !window.matchMedia('(min-width: 901px)').matches) return; // only on desktop
+                    const bg = document.querySelector('.music-bg');
+                    if(!bg) return;
+                    // create extra symbols dynamically to increase density (desktop only)
+                    const existing = bg.querySelectorAll('.music-symbol').length;
+                    const target = Math.max(40, Math.ceil(window.innerWidth / 30)); // target count based on width
+                    const extraToAdd = Math.max(0, target - existing);
+                    for(let i=0;i<extraToAdd;i++){
+                        const span = document.createElement('span');
+                        span.className = 'music-symbol extra';
+                        // position randomly but keep some margin
+                        const top = (5 + Math.random()*90).toFixed(1) + '%';
+                        const left = (3 + Math.random()*94).toFixed(1) + '%';
+                        const icons = ['🎵','🎶','🎷','🎸','🥁','🎺','🎻','🎹','🎤','🪈','🪗','🎼'];
+                        const icon = icons[Math.floor(Math.random()*icons.length)];
+                        span.style.top = top;
+                        span.style.left = left;
+                        span.textContent = icon;
+                        bg.appendChild(span);
+                    }
+
+                    const syms = document.querySelectorAll('.music-symbol');
+                    syms.forEach(function(el, idx){
+                        // assign multiple random waypoints (x0..x4, y0..y4, r0..r4)
+                        for(let i=0;i<=4;i++){
+                            const x = (Math.random()*420 - 210).toFixed(1) + 'px';
+                            const y = (Math.random()*420 - 210).toFixed(1) + 'px';
+                            const r = (Math.random()*140 - 70).toFixed(1) + 'deg';
+                            el.style.setProperty('--x'+i, x);
+                            el.style.setProperty('--y'+i, y);
+                            el.style.setProperty('--r'+i, r);
+                        }
+                        // random overall duration and staggered delay
+                        const dur = (10 + Math.random()*12).toFixed(2) + 's';
+                        const delay = (Math.random()*6).toFixed(2) + 's';
+                        el.style.animationDuration = dur;
+                        el.style.animationDelay = delay;
+                    });
+                })();
+        </script>
 </body>
 </html>
 
