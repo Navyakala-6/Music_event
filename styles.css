@@ -50,6 +50,9 @@ body {
   width: calc(100vw - 260px);
   height: 80px;
   display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 1003;
   margin: 0;
   padding: 0;
@@ -58,10 +61,12 @@ body {
   .bottom-boxes {
     left: 0;
     width: 100vw;
+    /* Keep horizontal scroll on mobile */
+    overflow-x: auto;
   }
 }
 .number-box {
-  flex: 1 1 20%;
+  flex: 0 0 20%;
   height: 100%;
   background: #232326;
   color: #fff;

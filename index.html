@@ -48,7 +48,7 @@
         </div>
         <div class="brand">
             <span class="logo">🎵</span>
-            <span class="title">OohM Event's</span>
+            <span class="title">Music Events</span>
         </div>
         <!-- Event Hamburger Dropdown (right) -->
         <div class="menu-wrapper">
@@ -282,101 +282,6 @@
             try{ return JSON.parse(localStorage.getItem('me_current')); }catch(e){ return null; }
         }
 
-        // --- Password reset token helpers ---
-        function getResetTokens(){
-            try{ return JSON.parse(localStorage.getItem('me_reset_tokens')||'[]'); }catch(e){ return []; }
-        }
-        function saveResetTokens(tokens){
-            try{ localStorage.setItem('me_reset_tokens', JSON.stringify(tokens||[])); }catch(e){}
-        }
-        function createResetToken(email, ttlMs){
-            ttlMs = ttlMs || (1000 * 60 * 60); // 1 hour default
-            const token = Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
-            const expires = Date.now() + ttlMs;
-            const tokens = getResetTokens();
-            tokens.push({ token: token, email: email, expires: expires });
-            saveResetTokens(tokens);
-            return token;
-        }
-        function consumeResetToken(token){
-            if(!token) return null;
-            const tokens = getResetTokens();
-            const idx = tokens.findIndex(t => t.token === token);
-            if(idx === -1) return null;
-            const entry = tokens[idx];
-            // remove it (single-use)
-            tokens.splice(idx,1);
-            saveResetTokens(tokens);
-            if(entry.expires && Date.now() > entry.expires) return null;
-            return entry.email;
-        }
-
-        // --- Forgot password flow (opens Gmail compose or mailto as a demo) ---
-        function handleForgotPassword(prefillEmail){
-            // try derive email from modal/popover inputs if not provided
-            let email = (prefillEmail||'').trim();
-            if(!email){
-                const e1 = document.getElementById('loginEmail') || document.getElementById('signupEmail');
-                if(e1 && e1.value) email = e1.value.trim();
-            }
-            if(!email) email = window.prompt('Enter your account email to receive a reset link:');
-            if(!email) return alert('Email is required to send a reset link.');
-            const user = findUserByEmail(email);
-            if(!user) return alert('No account found with that email.');
-            const token = createResetToken(email);
-            // build reset URL (demo: current origin + path + query)
-            const base = location.origin && location.pathname ? (location.origin + location.pathname) : location.href.split('#')[0].split('?')[0];
-            const resetUrl = base + '?reset=' + encodeURIComponent(token);
-            const subject = 'Reset your Music Events password';
-            const body = 'Hi ' + (user.name||'') + ',\n\nClick the link below to reset your password (demo):\n\n' + resetUrl + '\n\nIf you did not request this, ignore this message.';
-            // Prefer Gmail web compose if available
-            const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email) + '&su=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-            try{
-                window.open(gmailUrl, '_blank');
-                alert('Opened Gmail compose window (or a new tab). If it did not open, your browser may block popups — a mail draft will be attempted instead.');
-            }catch(e){
-                // fallback to mailto
-                window.location.href = 'mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-            }
-        }
-
-        // If page loaded with ?reset=token, show reset form modal
-        (function checkForResetTokenOnLoad(){
-            try{
-                const params = new URLSearchParams(window.location.search);
-                const token = params.get('reset');
-                if(!token) return;
-                // show modal with reset form
-                const email = (getResetTokens().find(t => t.token === token) || {}).email || '';
-                showModal('reset');
-                // render reset form into modalBody
-                modalTitle.textContent = 'Reset password';
-                modalBody.innerHTML = `
-                    <form id="resetForm">
-                        <div>
-                            <label for="resetEmail">Account email</label>
-                            <input id="resetEmail" name="resetEmail" type="email" value="${email}" readonly>
-                        </div>
-                        <div>
-                            <label for="resetPassword">New password</label>
-                            <input id="resetPassword" name="resetPassword" type="password" placeholder="New password" required>
-                        </div>
-                        <div>
-                            <label for="resetConfirm">Confirm password</label>
-                            <input id="resetConfirm" name="resetConfirm" type="password" placeholder="Confirm password" required>
-                        </div>
-                        <input type="hidden" id="resetToken" name="resetToken" value="${token}">
-                        <div class="modal-actions">
-                            <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                            <button type="submit" class="btn btn-primary" id="resetSubmit">Reset password</button>
-                        </div>
-                    </form>
-                `;
-                const firstInput = modalBody.querySelector('input');
-                if(firstInput) firstInput.focus();
-            }catch(e){ /* ignore */ }
-        })();
-
                         // Delegated click handlers: Signup opens modal; other generic handlers
                         document.addEventListener('click', function(e){
                                 const target = e.target;
@@ -384,7 +289,7 @@
                                 if(target.matches('#signupBtn')){ e.preventDefault(); showModal('signup'); return; }
                                 if(target.matches('#closeModal') || target.matches('#cancelBtn')){ e.preventDefault(); hideModal(); hidePopover(); return; }
                                 if(target.matches('#closePopover') || target.matches('#closePopoverBtn')){ e.preventDefault(); hidePopover(); return; }
-                                if(target.matches('#forgotPwdBtn')){ e.preventDefault(); handleForgotPassword(); return; }
+                                if(target.matches('#forgotPwdBtn')){ e.preventDefault(); alert('Forgot password flow - please contact support or reset via email.'); return; }
                         }, true);
 
                         // Attach a direct click handler to the login button to open the popover (keep dropdown open)
@@ -492,28 +397,6 @@
                 hideModal();
                 return;
             }
-            // Reset form
-            if(form.id === 'resetForm'){
-                e.preventDefault();
-                const token = (document.getElementById('resetToken')||{}).value || '';
-                const email = consumeResetToken(token);
-                if(!email){ alert('Reset link is invalid or expired.'); return; }
-                const pwd = (document.getElementById('resetPassword')||{}).value || '';
-                const conf = (document.getElementById('resetConfirm')||{}).value || '';
-                if(!pwd || !conf){ alert('Please fill both password fields'); return; }
-                if(pwd !== conf){ alert('Passwords do not match'); return; }
-                // update user
-                const users = getUsers();
-                const idx = users.findIndex(u => (u.email||'').toLowerCase() === (email||'').toLowerCase());
-                if(idx === -1){ alert('No account found.'); return; }
-                users[idx].password = pwd;
-                saveUsers(users);
-                alert('Password has been reset. You can now login with your new password.');
-                hideModal();
-                // clean ?reset= from URL
-                try{ const url = new URL(window.location); url.searchParams.delete('reset'); window.history.replaceState({}, document.title, url.toString()); }catch(e){}
-                return;
-            }
         }, true);
         })();
         </script>
@@ -525,6 +408,30 @@
         <div class="number-box">3</div>
         <div class="number-box">4</div>
         <div class="number-box">5</div>
+        <div class="number-box">6</div>
+        <div class="number-box">7</div>
+        <div class="number-box">8</div>
+        <div class="number-box">9</div>
+        <div class="number-box">10</div>
+        <div class="number-box">11</div>
+        <div class="number-box">12</div>
+        <div class="number-box">13</div>
+        <div class="number-box">14</div>
+        <div class="number-box">15</div>
+        <div class="number-box">16</div>
+        <div class="number-box">17</div>
+        <div class="number-box">18</div>
+        <div class="number-box">19</div>
+        <div class="number-box">20</div>
+        <div class="number-box">21</div>
+        <div class="number-box">22</div>
+        <div class="number-box">23</div>
+        <div class="number-box">24</div>
+        <div class="number-box">25</div>
+        <div class="number-box">26</div>
+        <div class="number-box">27</div>
+        <div class="number-box">28</div>
+        <div class="number-box">29</div>
     </div>
 
     <!-- Musical symbols background -->

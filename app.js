@@ -3,9 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const menuToggle = document.getElementById('menuToggle');
   const menu = document.getElementById('menu');
   if (menuToggle && menu) {
+    function closeFab(){ if(fabMenu) fabMenu.classList.remove('open'); if(fabToggle) fabToggle.setAttribute('aria-expanded','false'); }
+    function closeLogin(){ if(loginMenu) loginMenu.classList.remove('open'); if(loginMenuToggle) loginMenuToggle.setAttribute('aria-expanded','false'); }
+
     menuToggle.addEventListener('click', function(e) {
       e.stopPropagation();
       const isOpen = menu.classList.toggle('open');
+      // if opening menu, close others
+      if(isOpen){ closeFab(); closeLogin(); }
       menuToggle.setAttribute('aria-expanded', String(isOpen));
     });
     document.addEventListener('click', function(e) {
@@ -14,14 +19,54 @@ document.addEventListener('DOMContentLoaded', function() {
         menuToggle.setAttribute('aria-expanded', 'false');
       }
     });
+
+    // Populate the menu with A-Z alphabet options and make it scrollable
+    function populateAlphabetMenu(){
+      // clear existing contents
+      while(menu.firstChild) menu.removeChild(menu.firstChild);
+      const fragment = document.createDocumentFragment();
+      for(let i=0;i<26;i++){
+        const letter = String.fromCharCode(65 + i);
+        const btn = document.createElement('button');
+        btn.className = 'menu-item';
+        btn.type = 'button';
+        btn.textContent = letter;
+        btn.setAttribute('data-letter', letter);
+        fragment.appendChild(btn);
+      }
+      menu.appendChild(fragment);
+
+      // style the menu to cover half width and half height of viewport and be scrollable
+      try{
+        menu.style.boxSizing = 'border-box';
+        // set width to half of the present/computed dropdown width
+        const computedWidth = parseFloat(window.getComputedStyle(menu).width) || 260;
+        const halfWidth = Math.round(computedWidth / 2) || 130;
+        menu.style.width = halfWidth + 'px';
+        menu.style.maxWidth = halfWidth + 'px';
+        menu.style.maxHeight = Math.round(window.innerHeight / 2) + 'px';
+        menu.style.overflowY = 'auto';
+        menu.style.overflowX = 'hidden';
+      }catch(_){ }
+    }
+
+    // initial populate
+    populateAlphabetMenu();
+    // recompute on resize
+    window.addEventListener('resize', function(){ populateAlphabetMenu(); });
   }
 
   const fabToggle = document.getElementById('fabToggle');
   const fabMenu = document.getElementById('fabMenu');
   if (fabToggle && fabMenu) {
+    function closeMenu(){ if(menu) menu.classList.remove('open'); if(menuToggle) menuToggle.setAttribute('aria-expanded','false'); }
+    function closeLogin(){ if(loginMenu) loginMenu.classList.remove('open'); if(loginMenuToggle) loginMenuToggle.setAttribute('aria-expanded','false'); }
+
     fabToggle.addEventListener('click', function(e) {
       e.stopPropagation();
       const isOpen = fabMenu.classList.toggle('open');
+      // if opening fab, close others
+      if(isOpen){ closeMenu(); closeLogin(); }
       fabToggle.setAttribute('aria-expanded', String(isOpen));
     });
     document.addEventListener('click', function(e) {
@@ -76,9 +121,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const loginMenuToggle = document.getElementById('loginMenuToggle');
   const loginMenu = document.getElementById('loginMenu');
   if (loginMenuToggle && loginMenu) {
+    function closeMenu(){ if(menu) menu.classList.remove('open'); if(menuToggle) menuToggle.setAttribute('aria-expanded','false'); }
+    function closeFab(){ if(fabMenu) fabMenu.classList.remove('open'); if(fabToggle) fabToggle.setAttribute('aria-expanded','false'); }
+
     loginMenuToggle.addEventListener('click', function(e) {
       e.stopPropagation();
       const isOpen = loginMenu.classList.toggle('open');
+      // if opening login menu, close others
+      if(isOpen){ closeMenu(); closeFab(); }
       loginMenuToggle.setAttribute('aria-expanded', String(isOpen));
     });
     document.addEventListener('click', function(e) {
