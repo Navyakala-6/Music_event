@@ -33,6 +33,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (will be used for Auth + Firestore). Replace the firebaseConfig object below with your project's values. -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <header class="topbar">
@@ -255,31 +259,95 @@
                         loginPopoverBody.innerHTML = '';
                 }
 
-        // --- Simple client-side user storage (localStorage) ---
+        // --- Firebase Auth + Firestore helpers (client-side) ---
+        // IMPORTANT: Replace firebaseConfig with the real values from the Firebase console for the project
+        // that you create under the mail address you will provide. Do NOT commit service account keys.
+        const firebaseConfig = {
+            // apiKey: "REPLACE_ME",
+            // authDomain: "YOUR_PROJECT.firebaseapp.com",
+            // projectId: "YOUR_PROJECT_ID",
+            // storageBucket: "YOUR_PROJECT.appspot.com",
+            // messagingSenderId: "...",
+            // appId: "..."
+        };
+
+        // Initialize Firebase if config provided
+        let auth = null, db = null;
+        try{
+            if(firebaseConfig && Object.keys(firebaseConfig).length){
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('Firebase initialized (client)');
+            } else {
+                console.log('Firebase config not provided - running in local/demo mode');
+            }
+        }catch(e){ console.warn('Firebase init error', e); }
+
+        // Save a user profile to Firestore under users/{uid}
+        function saveProfile(uid, profile){
+            if(!db) return Promise.reject(new Error('Firestore not initialized'));
+            return db.collection('users').doc(uid).set(profile, { merge: true });
+        }
+
+        // Keep track of auth state (if firebase initialized)
+        // LocalStorage fallback helpers (used when Firebase not configured)
         function getUsers(){
+            try{ return JSON.parse(localStorage.getItem('me_users') || '[]'); }catch(e){ return []; }
+        }
+        function saveUsers(users){ try{ localStorage.setItem('me_users', JSON.stringify(users||[])); }catch(e){} }
+        function findUserByEmail(email){ if(!email) return null; const users = getUsers(); return users.find(u=> (u.email||'').toLowerCase()===email.toLowerCase()) || null; }
+        function createUser(user){ const users = getUsers(); users.push(user); saveUsers(users); }
+        function setCurrentUser(user){ try{ localStorage.setItem('me_current', JSON.stringify(user||null)); }catch(e){} }
+        function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('me_current')); }catch(e){ return null; } }
+
+        // Functions to hide/show main content until authenticated
+        function hideContent(){
+            const layout = document.querySelector('.layout');
+            const bottom = document.querySelector('.bottom-boxes');
+            const bg = document.querySelector('.music-bg');
+            if(layout) layout.style.display = 'none';
+            if(bottom) bottom.style.display = 'none';
+            if(bg) bg.style.display = 'none';
+        }
+        function showContent(){
+            const layout = document.querySelector('.layout');
+            const bottom = document.querySelector('.bottom-boxes');
+            const bg = document.querySelector('.music-bg');
+            if(layout) layout.style.display = '';
+            if(bottom) bottom.style.display = '';
+            if(bg) bg.style.display = '';
+        }
+
+        // Keep track of auth state (if firebase initialized)
+        if(typeof firebase !== 'undefined' && firebase && firebase.auth){
             try{
-                const raw = localStorage.getItem('me_users') || '[]';
-                return JSON.parse(raw);
-            }catch(e){ return []; }
-        }
-        function saveUsers(users){
-            try{ localStorage.setItem('me_users', JSON.stringify(users||[])); }catch(e){}
-        }
-        function findUserByEmail(email){
-            if(!email) return null;
-            const users = getUsers();
-            return users.find(u => (u.email||'').toLowerCase() === email.toLowerCase()) || null;
-        }
-        function createUser(user){
-            const users = getUsers();
-            users.push(user);
-            saveUsers(users);
-        }
-        function setCurrentUser(user){
-            try{ localStorage.setItem('me_current', JSON.stringify(user||null)); }catch(e){}
-        }
-        function getCurrentUser(){
-            try{ return JSON.parse(localStorage.getItem('me_current')); }catch(e){ return null; }
+                if(auth){
+                    auth.onAuthStateChanged(function(user){
+                        if(user){
+                            console.log('firebase signed-in as', user.email || user.uid);
+                            hidePopover(); hideModal();
+                            showContent();
+                        } else {
+                            console.log('no firebase user signed in');
+                            hideContent();
+                            // show login modal so user must sign in
+                            showModal('login');
+                        }
+                    });
+                }
+            }catch(e){ console.warn('auth state handling error', e); }
+        } else {
+            // No firebase configured: use localStorage fallback
+            const current = getCurrentUser();
+            if(current && current.email){
+                console.log('fallback signed-in as', current.email);
+                showContent();
+            } else {
+                hideContent();
+                // require user to sign in or sign up
+                showModal('login');
+            }
         }
 
                         // Delegated click handlers: Signup opens modal; other generic handlers
@@ -324,6 +392,24 @@
                                 console.log('direct loginBtn clicked (bubble)');
                             });
                         }
+                        // Logout handler (works with Firebase if initialized, otherwise clears localStorage)
+                        document.addEventListener('click', function(e){
+                            if(e.target && e.target.matches('#logoutBtn')){
+                                if(auth){
+                                    auth.signOut().then(()=>{
+                                        alert('Signed out');
+                                        hideContent();
+                                        showModal('login');
+                                    }).catch(err=> alert('Sign out error: '+err.message));
+                                } else {
+                                    // localStorage fallback
+                                    setCurrentUser(null);
+                                    alert('Signed out');
+                                    hideContent();
+                                    showModal('login');
+                                }
+                            }
+                        }, true);
                                 // Also make the profile icon open the popover directly (prevent dropdown toggle)
                                                 // Keep the profile icon behavior unchanged: it toggles the dropdown via existing app.js logic
 
@@ -345,25 +431,35 @@
                 }
 
         // Handle form submissions for popover, modal signup and modal login
+        // If Firebase is initialized we'll use Auth + Firestore; otherwise fall back to localStorage demo helpers.
         document.addEventListener('submit', function(e){
             const form = e.target;
             if(!form) return;
+            // Helper to ensure firebase is available
+            const hasFirebase = !!(auth && db);
+
             // Login from popover
             if(form.id === 'loginPopoverForm'){
                 e.preventDefault();
-                const name = (document.getElementById('loginName')||{}).value || '';
                 const email = (document.getElementById('loginEmail')||{}).value || '';
                 const pwd = (document.getElementById('loginPassword')||{}).value || '';
                 if(!email || !pwd){ alert('Please enter email and password'); return; }
-                const user = findUserByEmail(email);
-                if(!user){ alert('No account found with that email. Please signup first.'); return; }
-                if(user.password !== pwd){ alert('Credentials do not match.'); return; }
-                setCurrentUser({ name: user.name, email: user.email });
-                alert('Login successful! Welcome ' + (user.name||user.email));
-                console.log('Popover login submitted', { name, email });
-                hidePopover();
+                if(hasFirebase){
+                    auth.signInWithEmailAndPassword(email, pwd)
+                    .then(()=>{ alert('Login successful'); hidePopover(); })
+                    .catch(err=> alert('Login failed: ' + err.message));
+                } else {
+                    // fallback to localStorage demo
+                    const user = findUserByEmail(email);
+                    if(!user){ alert('No account found with that email. Please signup first.'); return; }
+                    if(user.password !== pwd){ alert('Credentials do not match.'); return; }
+                    setCurrentUser({ name: user.name, email: user.email });
+                    alert('Login successful! Welcome ' + (user.name||user.email));
+                    hidePopover();
+                }
                 return;
             }
+
             // Signup modal
             if(form.id === 'signupForm'){
                 e.preventDefault();
@@ -373,28 +469,42 @@
                 const conf = (document.getElementById('signupConfirm')||{}).value || '';
                 if(!name || !email || !pwd || !conf){ alert('Please fill all fields'); return; }
                 if(pwd !== conf){ alert('Passwords do not match'); return; }
-                // check duplicate
-                if(findUserByEmail(email)){ alert('An account with this email already exists. Please login.'); return; }
-                createUser({ name: name, email: email, password: pwd });
-                alert('Account created successfully. You can now login.');
-                console.log('Signup created', { name, email });
-                hideModal();
+                if(hasFirebase){
+                    auth.createUserWithEmailAndPassword(email, pwd)
+                    .then(cred => {
+                        const uid = cred.user.uid;
+                        return saveProfile(uid, { name: name, email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    })
+                    .then(()=>{ alert('Account created successfully. You are signed in.'); hideModal(); })
+                    .catch(err=> alert('Signup failed: ' + err.message));
+                } else {
+                    // fallback localStorage demo
+                    if(findUserByEmail(email)){ alert('An account with this email already exists. Please login.'); return; }
+                    createUser({ name: name, email: email, password: pwd });
+                    alert('Account created successfully. You can now login.');
+                    hideModal();
+                }
                 return;
             }
+
             // Login modal (centered)
             if(form.id === 'loginForm'){
                 e.preventDefault();
-                const name = (document.getElementById('loginName')||{}).value || '';
                 const email = (document.getElementById('loginEmail')||{}).value || '';
                 const pwd = (document.getElementById('loginPassword')||{}).value || '';
                 if(!email || !pwd){ alert('Please enter email and password'); return; }
-                const user = findUserByEmail(email);
-                if(!user){ alert('No account found with that email. Please signup first.'); return; }
-                if(user.password !== pwd){ alert('Credentials do not match.'); return; }
-                setCurrentUser({ name: user.name, email: user.email });
-                alert('Login successful! Welcome ' + (user.name||user.email));
-                console.log('Modal login submitted', { name, email });
-                hideModal();
+                if(hasFirebase){
+                    auth.signInWithEmailAndPassword(email, pwd)
+                    .then(()=>{ alert('Login successful'); hideModal(); })
+                    .catch(err=> alert('Login failed: ' + err.message));
+                } else {
+                    const user = findUserByEmail(email);
+                    if(!user){ alert('No account found with that email. Please signup first.'); return; }
+                    if(user.password !== pwd){ alert('Credentials do not match.'); return; }
+                    setCurrentUser({ name: user.name, email: user.email });
+                    alert('Login successful! Welcome ' + (user.name||user.email));
+                    hideModal();
+                }
                 return;
             }
         }, true);
