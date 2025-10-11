@@ -1,4 +1,3 @@
-
 /* Small vertical bar for sidebar toggle */
 .sidebar-bar-toggle {
   position: fixed;
@@ -38,6 +37,66 @@ body {
   color: #f8fafc;
   background: #000;
   position: relative;
+}
+
+/* Blank background for login/signup pages */
+body.login-page {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+body.login-page .music-bg {
+  display: none !important;
+}
+
+body.login-page .bottom-boxes {
+  display: none !important;
+}
+
+/* Modal styling for authentication */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.modal-card {
+  background: #2d2d2d !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid #555 !important;
+}
+
+.modal-body label {
+  color: #e0e0e0 !important;
+}
+
+.modal-body input {
+  background: #3a3a3a !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+.modal-body input:focus {
+  border-color: #666 !important;
+  outline: none !important;
+}
+
+.btn-primary {
+  background: #4a4a4a !important;
+  color: #ffffff !important;
+  border: 1px solid #666 !important;
+}
+
+.btn-secondary {
+  background: #555 !important;
+  color: #ffffff !important;
+  border: 1px solid #777 !important;
+}
+
+.btn-link {
+  color: #8a8a8a !important;
 }
 
 
@@ -222,6 +281,12 @@ body {
   padding: 8px;
   display: none;
   z-index: 1002;
+  /* Add scrolling capability */
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Prevent scrolling from affecting parent elements */
+  overscroll-behavior: contain;
 }
 .menu.open { display: block; }
 .menu-item, .fab-item {
@@ -310,6 +375,8 @@ body {
   border-right: 1px solid #222;
   background: #000;
   overflow: hidden;
+  /* Prevent scrolling interference */
+  overscroll-behavior: contain;
 }
 .sidebar-header { padding: 12px; border-bottom: 1px solid #e2e8f0; }
 .sidebar-header h2 { margin: 0 0 8px 0; font-size: 16px; }

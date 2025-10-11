@@ -1,179 +1,187 @@
-document.addEventListener('DOMContentLoaded', function() {
-  // Dropdown logic
-  const menuToggle = document.getElementById('menuToggle');
-  const menu = document.getElementById('menu');
+// ============================================================
+// MUSIC EVENTS ORGANISATION — FULL UPDATED JAVASCRIPT
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("menu");
+  const fabToggle = document.getElementById("fabToggle");
+  const fabMenu = document.getElementById("fabMenu");
+  const loginMenuToggle = document.getElementById("loginMenuToggle");
+  const loginMenu = document.getElementById("loginMenu");
+
+  /* ---------------- Alphabetic dropdown (A–Z) ---------------- */
+  function populateAlphabetMenu() {
+    if (!menu) return;
+    menu.innerHTML = "";
+    for (let i = 65; i <= 90; i++) {
+      const btn = document.createElement("button");
+      btn.className = "menu-item";
+      btn.textContent = String.fromCharCode(i);
+      menu.appendChild(btn);
+    }
+    
+    // Add scroll functionality to the menu
+    let isScrolling = false;
+    let startY = 0;
+    let scrollTop = 0;
+    
+    menu.addEventListener('touchstart', (e) => {
+      isScrolling = true;
+      startY = e.touches[0].pageY - menu.offsetTop;
+      scrollTop = menu.scrollTop;
+    }, { passive: true });
+    
+    menu.addEventListener('touchmove', (e) => {
+      if (!isScrolling) return;
+      e.preventDefault();
+      const y = e.touches[0].pageY - menu.offsetTop;
+      const walk = (y - startY) * 2;
+      menu.scrollTop = scrollTop - walk;
+    }, { passive: false });
+    
+    menu.addEventListener('touchend', () => {
+      isScrolling = false;
+    }, { passive: true });
+    
+    // Also add mouse wheel support
+    menu.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      menu.scrollTop += e.deltaY;
+    }, { passive: false });
+  }
+  populateAlphabetMenu();
+
+  /* ---------------- Instrument list ---------------- */
+  const listEl = document.getElementById("instrumentList");
+  if (listEl) {
+    const instruments = [
+      { id: "piano", name: "Piano", emoji: "🎹" },
+      { id: "guitar", name: "Guitar", emoji: "🎸" },
+      { id: "violin", name: "Violin", emoji: "🎻" },
+      { id: "trumpet", name: "Trumpet", emoji: "🎺" },
+      { id: "saxophone", name: "Saxophone", emoji: "🎷" },
+      { id: "drum", name: "Drums", emoji: "🥁" },
+      { id: "microphone", name: "Vocal", emoji: "🎤" },
+      { id: "accordion", name: "Accordion", emoji: "🪗" },
+      { id: "banjo", name: "Banjo", emoji: "🪕" },
+      { id: "flute", name: "Flute", emoji: "🪈" },
+      { id: "harp", name: "Harp", emoji: "🎼" },
+      { id: "clarinet", name: "Clarinet", emoji: "🎶" },
+      { id: "cello", name: "Cello", emoji: "🎼" },
+      { id: "tabla", name: "Tabla", emoji: "🪘" },
+      { id: "trombone", name: "Trombone", emoji: "🎼" },
+      { id: "bass", name: "Bass", emoji: "🎼" },
+      { id: "harmonica", name: "Harmonica", emoji: "🎼" }
+    ];
+    listEl.innerHTML = "";
+    instruments.forEach((inst) => {
+      const li = document.createElement("li");
+      li.className = "instrument-item";
+      li.setAttribute("data-id", inst.id);
+      li.innerHTML = `<span class="instrument-emoji">${inst.emoji}</span>
+                      <span class="instrument-name">${inst.name}</span>`;
+      listEl.appendChild(li);
+    });
+  }
+
+  /* ---------------- Bottom number boxes (1–29) ---------------- */
+  const bottomBoxes = document.getElementById("bottomBoxes");
+  if (bottomBoxes) {
+    bottomBoxes.innerHTML = "";
+    for (let i = 1; i <= 29; i++) {
+      const div = document.createElement("div");
+      div.className = "number-box";
+      div.textContent = i;
+      bottomBoxes.appendChild(div);
+    }
+  }
+
+  /* ---------------- Floating music symbols ---------------- */
+  const musicBg = document.getElementById("musicBg");
+  function populateMusicSymbols() {
+    if (!musicBg) return;
+    musicBg.innerHTML = "";
+    const icons = ["🎵", "🎶", "🎷", "🎸", "🥁", "🎺", "🎻", "🎹", "🎤", "🪈", "🪗", "🎼"];
+    const count = Math.max(40, Math.ceil(window.innerWidth / 30));
+    for (let i = 0; i < count; i++) {
+      const span = document.createElement("span");
+      span.className = "music-symbol";
+      span.textContent = icons[Math.floor(Math.random() * icons.length)];
+      span.style.top = `${Math.random() * 90 + 5}%`;
+      span.style.left = `${Math.random() * 94 + 3}%`;
+      for (let p = 0; p <= 4; p++) {
+        const x = `${(Math.random() * 420 - 210).toFixed(1)}px`;
+        const y = `${(Math.random() * 420 - 210).toFixed(1)}px`;
+        const r = `${(Math.random() * 140 - 70).toFixed(1)}deg`;
+        span.style.setProperty(`--x${p}`, x);
+        span.style.setProperty(`--y${p}`, y);
+        span.style.setProperty(`--r${p}`, r);
+      }
+      span.style.animationDuration = `${(10 + Math.random() * 12).toFixed(2)}s`;
+      span.style.animationDelay = `${(Math.random() * 6).toFixed(2)}s`;
+      musicBg.appendChild(span);
+    }
+  }
+  populateMusicSymbols();
+  window.addEventListener("resize", populateMusicSymbols);
+
+  /* ---------------- Menu & FAB interactions ---------------- */
   if (menuToggle && menu) {
-    function closeFab(){ if(fabMenu) fabMenu.classList.remove('open'); if(fabToggle) fabToggle.setAttribute('aria-expanded','false'); }
-    function closeLogin(){ if(loginMenu) loginMenu.classList.remove('open'); if(loginMenuToggle) loginMenuToggle.setAttribute('aria-expanded','false'); }
-
-    menuToggle.addEventListener('click', function(e) {
+    menuToggle.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isOpen = menu.classList.toggle('open');
-      // if opening menu, close others
-      if(isOpen){ closeFab(); closeLogin(); }
-      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      const isOpen = menu.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(isOpen));
+      fabMenu?.classList.remove("open");
+      loginMenu?.classList.remove("open");
     });
-    document.addEventListener('click', function(e) {
+    document.addEventListener("click", (e) => {
       if (!menu.contains(e.target) && e.target !== menuToggle) {
-        menu.classList.remove('open');
-        menuToggle.setAttribute('aria-expanded', 'false');
+        menu.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
       }
     });
-
-    // Populate the menu with A-Z alphabet options and make it scrollable
-    function populateAlphabetMenu(){
-      // clear existing contents
-      while(menu.firstChild) menu.removeChild(menu.firstChild);
-      const fragment = document.createDocumentFragment();
-      for(let i=0;i<26;i++){
-        const letter = String.fromCharCode(65 + i);
-        const btn = document.createElement('button');
-        btn.className = 'menu-item';
-        btn.type = 'button';
-        btn.textContent = letter;
-        btn.setAttribute('data-letter', letter);
-        fragment.appendChild(btn);
-      }
-      menu.appendChild(fragment);
-
-      // style the menu to cover half width and half height of viewport and be scrollable
-      try{
-        menu.style.boxSizing = 'border-box';
-        // set width to half of the present/computed dropdown width
-        const computedWidth = parseFloat(window.getComputedStyle(menu).width) || 260;
-        const halfWidth = Math.round(computedWidth / 2) || 130;
-        menu.style.width = halfWidth + 'px';
-        menu.style.maxWidth = halfWidth + 'px';
-        menu.style.maxHeight = Math.round(window.innerHeight / 2) + 'px';
-        menu.style.overflowY = 'auto';
-        menu.style.overflowX = 'hidden';
-      }catch(_){ }
-    }
-
-    // initial populate
-    populateAlphabetMenu();
-    // recompute on resize
-    window.addEventListener('resize', function(){ populateAlphabetMenu(); });
   }
 
-  const fabToggle = document.getElementById('fabToggle');
-  const fabMenu = document.getElementById('fabMenu');
   if (fabToggle && fabMenu) {
-    function closeMenu(){ if(menu) menu.classList.remove('open'); if(menuToggle) menuToggle.setAttribute('aria-expanded','false'); }
-    function closeLogin(){ if(loginMenu) loginMenu.classList.remove('open'); if(loginMenuToggle) loginMenuToggle.setAttribute('aria-expanded','false'); }
-
-    fabToggle.addEventListener('click', function(e) {
+    fabToggle.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isOpen = fabMenu.classList.toggle('open');
-      // if opening fab, close others
-      if(isOpen){ closeMenu(); closeLogin(); }
-      fabToggle.setAttribute('aria-expanded', String(isOpen));
+      const open = fabMenu.classList.toggle("open");
+      fabToggle.setAttribute("aria-expanded", String(open));
+      menu?.classList.remove("open");
+      loginMenu?.classList.remove("open");
     });
-    document.addEventListener('click', function(e) {
+    document.addEventListener("click", (e) => {
       if (!fabMenu.contains(e.target) && e.target !== fabToggle) {
-        fabMenu.classList.remove('open');
-        fabToggle.setAttribute('aria-expanded', 'false');
+        fabMenu.classList.remove("open");
+        fabToggle.setAttribute("aria-expanded", "false");
       }
     });
   }
 
-  // Mobile sidebar swipe logic (attach listeners to main content area for global swipe)
-  let touchStartX = null;
-  let touchEndX = null;
-  const sidebar = document.querySelector('.sidebar');
-  const sidebarBarToggle = document.getElementById('sidebarBarToggle');
-  function handleTouchStart(e) {
-    if (e.touches && e.touches.length === 1) {
-      touchStartX = e.touches[0].clientX;
-    }
-  }
-  function handleTouchMove(e) {
-    if (e.touches && e.touches.length === 1) {
-      touchEndX = e.touches[0].clientX;
-    }
-  }
-  function handleTouchEnd() {
-    if (touchStartX !== null && touchEndX !== null) {
-      const diff = touchEndX - touchStartX;
-      // Swipe right to expand sidebar
-      if (diff > 60 && window.innerWidth <= 900) {
-        sidebar.classList.add('expanded');
-        if (sidebarBarToggle) sidebarBarToggle.classList.add('hide');
-      }
-      // Swipe left to collapse sidebar
-      if (diff < -60 && window.innerWidth <= 900) {
-        sidebar.classList.remove('expanded');
-        if (sidebarBarToggle) sidebarBarToggle.classList.remove('hide');
-      }
-    }
-    touchStartX = null;
-    touchEndX = null;
-  }
-  // Attach listeners to main content area for swipe detection
-  const mainContent = document.querySelector('main.content');
-  if (mainContent) {
-    mainContent.addEventListener('touchstart', handleTouchStart);
-    mainContent.addEventListener('touchmove', handleTouchMove);
-    mainContent.addEventListener('touchend', handleTouchEnd);
-  }
-
-  // Login dropdown logic
-  const loginMenuToggle = document.getElementById('loginMenuToggle');
-  const loginMenu = document.getElementById('loginMenu');
   if (loginMenuToggle && loginMenu) {
-    function closeMenu(){ if(menu) menu.classList.remove('open'); if(menuToggle) menuToggle.setAttribute('aria-expanded','false'); }
-    function closeFab(){ if(fabMenu) fabMenu.classList.remove('open'); if(fabToggle) fabToggle.setAttribute('aria-expanded','false'); }
-
-    loginMenuToggle.addEventListener('click', function(e) {
+    loginMenuToggle.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isOpen = loginMenu.classList.toggle('open');
-      // if opening login menu, close others
-      if(isOpen){ closeMenu(); closeFab(); }
-      loginMenuToggle.setAttribute('aria-expanded', String(isOpen));
+      const open = loginMenu.classList.toggle("open");
+      loginMenuToggle.setAttribute("aria-expanded", String(open));
+      fabMenu?.classList.remove("open");
+      fabToggle?.setAttribute("aria-expanded", "false");
     });
-    document.addEventListener('click', function(e) {
+    document.addEventListener("click", (e) => {
       if (!loginMenu.contains(e.target) && e.target !== loginMenuToggle) {
-        loginMenu.classList.remove('open');
-        loginMenuToggle.setAttribute('aria-expanded', 'false');
+        loginMenu.classList.remove("open");
+        loginMenuToggle.setAttribute("aria-expanded", "false");
       }
     });
   }
 
-  // Instrument rendering
-  const listEl = document.getElementById('instrumentList');
-  const instruments = [
-    { id: 'piano', name: 'Piano', emoji: '🎹' },
-    { id: 'guitar', name: 'Guitar', emoji: '🎸' },
-    { id: 'violin', name: 'Violin', emoji: '🎻' },
-    { id: 'trumpet', name: 'Trumpet', emoji: '🎺' },
-    { id: 'saxophone', name: 'Saxophone', emoji: '🎷' },
-    { id: 'drum', name: 'Drums', emoji: '🥁' },
-    { id: 'microphone', name: 'Vocal', emoji: '🎤' },
-    { id: 'accordion', name: 'Accordion', emoji: '🪗' },
-    { id: 'banjo', name: 'Banjo', emoji: '🪕' },
-    { id: 'flute', name: 'Flute', emoji: '🪈' },
-    { id: 'harp', name: 'Harp', emoji: '🎼' },
-    { id: 'clarinet', name: 'Clarinet', emoji: '🎶' },
-    { id: 'cello', name: 'Cello', emoji: '🎼' },
-    { id: 'tabla', name: 'Tabla', emoji: '🪘' },
-    { id: 'trombone', name: 'Trombone', emoji: '🎼' },
-    { id: 'bass', name: 'Bass', emoji: '🎼' },
-    { id: 'harmonica', name: 'Harmonica', emoji: '🎼' }
-  ];
-  listEl.innerHTML = '';
-  instruments.forEach(function(inst) {
-    const li = document.createElement('li');
-    li.className = 'instrument-item';
-    li.setAttribute('data-id', inst.id);
-    const emoji = document.createElement('span');
-    emoji.className = 'instrument-emoji';
-    emoji.textContent = inst.emoji;
-    const name = document.createElement('span');
-    name.className = 'instrument-name';
-    name.textContent = inst.name;
-    li.appendChild(emoji);
-    li.appendChild(name);
-    listEl.appendChild(li);
+  /* ---------------- FAB button options ---------------- */
+  const suggestionBtn = document.getElementById("suggestionBtn");
+  const helpBtn = document.getElementById("helpBtn");
+  suggestionBtn?.addEventListener("click", () => {
+    alert("Suggestion clicked — open your suggestion flow here.");
+  });
+  helpBtn?.addEventListener("click", () => {
+    alert("Help clicked — open your help flow here.");
   });
 });
-

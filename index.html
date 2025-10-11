@@ -142,32 +142,42 @@
 
                 function showModal(mode){
                                 if(!modalBackdrop || !modalBody) return;
+                                // Add login-page class to body for blank background
+                                document.body.classList.add('login-page');
                                 modalBackdrop.style.display = '';
                                 modalBackdrop.classList.remove('hidden');
                                 document.body.style.overflow = 'hidden';
                                 if(mode === 'signup'){
-                                        modalTitle.textContent = 'Create account';
+                                        modalTitle.textContent = 'Create Account';
                                         modalBody.innerHTML = `
                                                 <form id="signupForm">
                                                     <div>
-                                                        <label for="signupName">Full name</label>
-                                                        <input id="signupName" name="signupName" type="text" placeholder="Your full name" required>
+                                                        <label for="signupFullName">Full Name</label>
+                                                        <input id="signupFullName" name="signupFullName" type="text" placeholder="Enter your full name" required>
                                                     </div>
                                                     <div>
                                                         <label for="signupEmail">Email</label>
-                                                        <input id="signupEmail" name="signupEmail" type="email" placeholder="you@example.com" required>
+                                                        <input id="signupEmail" name="signupEmail" type="email" placeholder="Enter your email" required>
                                                     </div>
                                                     <div>
-                                                        <label for="signupPassword">Set password</label>
+                                                        <label for="signupMobile">Mobile Number</label>
+                                                        <input id="signupMobile" name="signupMobile" type="tel" placeholder="Enter mobile number" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="signupPassword">Create Password</label>
                                                         <input id="signupPassword" name="signupPassword" type="password" placeholder="Create password" required>
                                                     </div>
                                                     <div>
-                                                        <label for="signupConfirm">Confirm password</label>
+                                                        <label for="signupConfirm">Confirm Password</label>
                                                         <input id="signupConfirm" name="signupConfirm" type="password" placeholder="Confirm password" required>
                                                     </div>
                                                     <div class="modal-actions">
                                                         <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                                                        <button type="submit" class="btn btn-primary" id="signupSubmit">Signup</button>
+                                                        <button type="submit" class="btn btn-primary" id="signupSubmit">Create Account</button>
+                                                    </div>
+                                                    <div style="text-align: center; margin-top: 15px;">
+                                                        <span style="color: #666; font-size: 0.9rem;">Already have an account? </span>
+                                                        <button type="button" class="btn btn-link" id="loginAccountBtn" style="background: none; border: none; color: #2727ff; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Login</button>
                                                     </div>
                                                 </form>
                                         `;
@@ -176,21 +186,25 @@
                                         modalBody.innerHTML = `
                                                 <form id="loginForm">
                                                     <div>
-                                                        <label for="loginName">Full name</label>
-                                                        <input id="loginName" name="loginName" type="text" placeholder="Your full name" required>
+                                                        <label for="loginFullName">Full Name</label>
+                                                        <input id="loginFullName" name="loginFullName" type="text" placeholder="Enter your full name" required>
                                                     </div>
                                                     <div>
-                                                        <label for="loginEmail">Email</label>
-                                                        <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required>
+                                                        <label for="loginEmail">Email or Mobile Number</label>
+                                                        <input id="loginEmail" name="loginEmail" type="text" placeholder="Enter email or mobile number" required>
                                                     </div>
                                                     <div>
                                                         <label for="loginPassword">Password</label>
-                                                        <input id="loginPassword" name="loginPassword" type="password" placeholder="Password" required>
+                                                        <input id="loginPassword" name="loginPassword" type="password" placeholder="Enter password" required>
                                                     </div>
                                                     <div class="modal-actions">
-                                                        <button type="button" class="btn btn-secondary" id="forgotPwdBtn">Forgot password</button>
+                                                        <button type="button" class="btn btn-secondary" id="forgotPwdBtn">Forgot Password</button>
                                                         <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
                                                         <button type="submit" class="btn btn-primary" id="loginSubmit">Login</button>
+                                                    </div>
+                                                    <div style="text-align: center; margin-top: 15px;">
+                                                        <span style="color: #666; font-size: 0.9rem;">Don't have an account? </span>
+                                                        <button type="button" class="btn btn-link" id="createAccountBtn" style="background: none; border: none; color: #2727ff; text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Create Account</button>
                                                     </div>
                                                 </form>
                                         `;
@@ -199,12 +213,63 @@
                                 if(firstInput) firstInput.focus();
                         }
 
-                function hideModal(){
-                        if(!modalBackdrop) return;
-                        modalBackdrop.classList.add('hidden');
-                        modalBackdrop.style.display = 'none';
-                        document.body.style.overflow = '';
-                        modalBody.innerHTML = '';
+                function showUserAccountModal(){
+                    if(!modalBackdrop || !modalBody) return;
+                    modalBackdrop.style.display = '';
+                    modalBackdrop.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    modalTitle.textContent = 'My Account';
+                    
+                    const user = auth.currentUser;
+                    if(!user) {
+                        alert('No user logged in');
+                        hideModal();
+                        return;
+                    }
+                    
+                    // Get user profile from Firestore
+                    db.collection('users').doc(user.uid).get()
+                    .then(doc => {
+                        const userData = doc.exists ? doc.data() : { email: user.email, mobile: '' };
+                        const userEmail = userData.email || user.email || '';
+                        const userMobile = userData.mobile || '';
+                        
+                        modalBody.innerHTML = `
+                            <form id="userAccountForm">
+                                <div>
+                                    <label for="accountFullName">Full Name</label>
+                                    <input id="accountFullName" name="accountFullName" type="text" value="${userData.fullName || ''}" required>
+                                </div>
+                                <div>
+                                    <label for="accountEmail">Email</label>
+                                    <input id="accountEmail" name="accountEmail" type="email" value="${userEmail}" required>
+                                </div>
+                                <div>
+                                    <label for="accountMobile">Mobile Number</label>
+                                    <input id="accountMobile" name="accountMobile" type="tel" value="${userMobile}" required>
+                                </div>
+                                <div>
+                                    <label for="accountPassword">New Password (leave blank to keep current)</label>
+                                    <input id="accountPassword" name="accountPassword" type="password" placeholder="Enter new password">
+                                </div>
+                                <div>
+                                    <label for="accountConfirmPassword">Confirm New Password</label>
+                                    <input id="accountConfirmPassword" name="accountConfirmPassword" type="password" placeholder="Confirm new password">
+                                </div>
+                                <div class="modal-actions">
+                                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" id="updateAccountBtn">Update Account</button>
+                                </div>
+                            </form>
+                        `;
+                        const firstInput = modalBody.querySelector('input');
+                        if(firstInput) firstInput.focus();
+                    })
+                    .catch(err => {
+                        console.error('Error fetching user data:', err);
+                        alert('Error loading account data');
+                        hideModal();
+                    });
                 }
 
                 function showPopover(){
@@ -214,16 +279,16 @@
                         loginPopoverBody.innerHTML = `
                             <form id="loginPopoverForm">
                                 <div>
-                                    <label for="loginName">Full name</label>
-                                    <input id="loginName" name="loginName" type="text" placeholder="Your full name" value="GitHub Copilot">
+                                    <label for="loginFullName">Full Name</label>
+                                    <input id="loginFullName" name="loginFullName" type="text" placeholder="Enter your full name" required>
                                 </div>
                                 <div>
-                                    <label for="loginEmail">Email</label>
-                                    <input id="loginEmail" name="loginEmail" type="email" placeholder="you@example.com" required>
+                                    <label for="loginEmail">Email or Mobile Number</label>
+                                    <input id="loginEmail" name="loginEmail" type="text" placeholder="Enter email or mobile number" required>
                                 </div>
                                 <div>
                                     <label for="loginPassword">Password</label>
-                                    <input id="loginPassword" name="loginPassword" type="password" placeholder="Password" required>
+                                    <input id="loginPassword" name="loginPassword" type="password" placeholder="Enter password" required>
                                 </div>
                                 <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
                                     <button type="button" class="btn btn-secondary" id="forgotPwdBtn">Forgot</button>
@@ -252,6 +317,46 @@
                         });
                 }
 
+                function hideModal(){
+                        if(!modalBackdrop) return;
+                        // Remove login-page class from body
+                        document.body.classList.remove('login-page');
+                        modalBackdrop.classList.add('hidden');
+                        modalBackdrop.style.display = 'none';
+                        document.body.style.overflow = '';
+                        modalBody.innerHTML = '';
+                }
+
+                // Function to update login dropdown based on auth state
+                function updateLoginDropdown(isLoggedIn, user = null){
+                    const loginMenu = document.getElementById('loginMenu');
+                    const loginMenuToggle = document.getElementById('loginMenuToggle');
+                    if(!loginMenu || !loginMenuToggle) return;
+                    
+                    if(isLoggedIn && user){
+                        // Show first letter of full name in profile button
+                        const userInitial = user.fullName ? user.fullName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'U');
+                        loginMenuToggle.textContent = userInitial;
+                        loginMenuToggle.title = `Logged in as ${user.fullName || user.email}`;
+                        
+                        // Update dropdown menu
+                        loginMenu.innerHTML = `
+                            <button class="menu-item" id="myAccountBtn">My Account</button>
+                            <button class="menu-item" id="logoutBtn">Logout</button>
+                        `;
+                    } else {
+                        // Show default profile icon
+                        loginMenuToggle.textContent = '👤';
+                        loginMenuToggle.title = 'Login';
+                        
+                        // Update dropdown menu
+                        loginMenu.innerHTML = `
+                            <button class="menu-item" id="loginBtn">Login</button>
+                            <button class="menu-item" id="signupBtn">Signup</button>
+                        `;
+                    }
+                }
+
                 function hidePopover(){
                         if(!loginPopover) return;
                         loginPopover.classList.add('hidden');
@@ -263,12 +368,13 @@
         // IMPORTANT: Replace firebaseConfig with the real values from the Firebase console for the project
         // that you create under the mail address you will provide. Do NOT commit service account keys.
         const firebaseConfig = {
-            // apiKey: "REPLACE_ME",
-            // authDomain: "YOUR_PROJECT.firebaseapp.com",
-            // projectId: "YOUR_PROJECT_ID",
-            // storageBucket: "YOUR_PROJECT.appspot.com",
-            // messagingSenderId: "...",
-            // appId: "..."
+            apiKey: "AIzaSyBk9voLnYCmAtimrIZDK9F_dFO3sQCyMII",
+            authDomain: "sri-music-events-37987.firebaseapp.com",
+            projectId: "sri-music-events-37987",
+            storageBucket: "sri-music-events-37987.firebasestorage.app",
+            messagingSenderId: "171969258087",
+            appId: "1:171969258087:web:cb29c4efff579eae17aac2",
+            measurementId: "G-R0TES365LE"
         };
 
         // Initialize Firebase if config provided
@@ -290,17 +396,6 @@
             return db.collection('users').doc(uid).set(profile, { merge: true });
         }
 
-        // Keep track of auth state (if firebase initialized)
-        // LocalStorage fallback helpers (used when Firebase not configured)
-        function getUsers(){
-            try{ return JSON.parse(localStorage.getItem('me_users') || '[]'); }catch(e){ return []; }
-        }
-        function saveUsers(users){ try{ localStorage.setItem('me_users', JSON.stringify(users||[])); }catch(e){} }
-        function findUserByEmail(email){ if(!email) return null; const users = getUsers(); return users.find(u=> (u.email||'').toLowerCase()===email.toLowerCase()) || null; }
-        function createUser(user){ const users = getUsers(); users.push(user); saveUsers(users); }
-        function setCurrentUser(user){ try{ localStorage.setItem('me_current', JSON.stringify(user||null)); }catch(e){} }
-        function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('me_current')); }catch(e){ return null; } }
-
         // Functions to hide/show main content until authenticated
         function hideContent(){
             const layout = document.querySelector('.layout');
@@ -319,7 +414,7 @@
             if(bg) bg.style.display = '';
         }
 
-        // Keep track of auth state (if firebase initialized)
+        // Keep track of auth state (Firebase only - no localStorage fallback)
         if(typeof firebase !== 'undefined' && firebase && firebase.auth){
             try{
                 if(auth){
@@ -328,9 +423,19 @@
                             console.log('firebase signed-in as', user.email || user.uid);
                             hidePopover(); hideModal();
                             showContent();
+                            // Get user profile from Firestore
+                            db.collection('users').doc(user.uid).get()
+                            .then(doc => {
+                                const userData = doc.exists ? doc.data() : { email: user.email };
+                                updateLoginDropdown(true, userData);
+                            })
+                            .catch(() => {
+                                updateLoginDropdown(true, { email: user.email });
+                            });
                         } else {
                             console.log('no firebase user signed in');
                             hideContent();
+                            updateLoginDropdown(false);
                             // show login modal so user must sign in
                             showModal('login');
                         }
@@ -338,16 +443,11 @@
                 }
             }catch(e){ console.warn('auth state handling error', e); }
         } else {
-            // No firebase configured: use localStorage fallback
-            const current = getCurrentUser();
-            if(current && current.email){
-                console.log('fallback signed-in as', current.email);
-                showContent();
-            } else {
-                hideContent();
-                // require user to sign in or sign up
-                showModal('login');
-            }
+            // Firebase not configured - show error and require setup
+            console.error('Firebase not configured. Please check your Firebase configuration.');
+            hideContent();
+            updateLoginDropdown(false);
+            showModal('login');
         }
 
                         // Delegated click handlers: Signup opens modal; other generic handlers
@@ -355,9 +455,21 @@
                                 const target = e.target;
                                 if(!target) return;
                                 if(target.matches('#signupBtn')){ e.preventDefault(); showModal('signup'); return; }
+                                if(target.matches('#createAccountBtn')){ e.preventDefault(); showModal('signup'); return; }
+                                if(target.matches('#loginAccountBtn')){ e.preventDefault(); showModal('login'); return; }
+                                if(target.matches('#myAccountBtn')){ e.preventDefault(); showUserAccountModal(); return; }
                                 if(target.matches('#closeModal') || target.matches('#cancelBtn')){ e.preventDefault(); hideModal(); hidePopover(); return; }
                                 if(target.matches('#closePopover') || target.matches('#closePopoverBtn')){ e.preventDefault(); hidePopover(); return; }
-                                if(target.matches('#forgotPwdBtn')){ e.preventDefault(); alert('Forgot password flow - please contact support or reset via email.'); return; }
+                                if(target.matches('#forgotPwdBtn')){ 
+                                    e.preventDefault(); 
+                                    const email = prompt('Enter your email address to reset password:');
+                                    if(email && email.trim()){
+                                        auth.sendPasswordResetEmail(email.trim())
+                                        .then(() => alert('Password reset email sent! Check your inbox.'))
+                                        .catch(err => alert('Error sending reset email: ' + err.message));
+                                    }
+                                    return; 
+                                }
                         }, true);
 
                         // Attach a direct click handler to the login button to open the popover (keep dropdown open)
@@ -392,22 +504,15 @@
                                 console.log('direct loginBtn clicked (bubble)');
                             });
                         }
-                        // Logout handler (works with Firebase if initialized, otherwise clears localStorage)
+                        // Logout handler (Firebase only)
                         document.addEventListener('click', function(e){
                             if(e.target && e.target.matches('#logoutBtn')){
-                                if(auth){
-                                    auth.signOut().then(()=>{
-                                        alert('Signed out');
-                                        hideContent();
-                                        showModal('login');
-                                    }).catch(err=> alert('Sign out error: '+err.message));
-                                } else {
-                                    // localStorage fallback
-                                    setCurrentUser(null);
+                                auth.signOut().then(()=>{
                                     alert('Signed out');
                                     hideContent();
+                                    updateLoginDropdown(false);
                                     showModal('login');
-                                }
+                                }).catch(err=> alert('Sign out error: '+err.message));
                             }
                         }, true);
                                 // Also make the profile icon open the popover directly (prevent dropdown toggle)
@@ -441,21 +546,39 @@
             // Login from popover
             if(form.id === 'loginPopoverForm'){
                 e.preventDefault();
-                const email = (document.getElementById('loginEmail')||{}).value || '';
+                const fullName = (document.getElementById('loginFullName')||{}).value || '';
+                const emailOrMobile = (document.getElementById('loginEmail')||{}).value || '';
                 const pwd = (document.getElementById('loginPassword')||{}).value || '';
-                if(!email || !pwd){ alert('Please enter email and password'); return; }
-                if(hasFirebase){
-                    auth.signInWithEmailAndPassword(email, pwd)
-                    .then(()=>{ alert('Login successful'); hidePopover(); })
+                if(!fullName || !emailOrMobile || !pwd){ alert('Please fill all fields'); return; }
+                
+                // Check if input is email or mobile number
+                const isEmail = emailOrMobile.includes('@');
+                if(isEmail){
+                    auth.signInWithEmailAndPassword(emailOrMobile, pwd)
+                    .then(()=>{ 
+                        alert('Login successful'); 
+                        hidePopover(); 
+                        // Update dropdown will be handled by auth state change
+                    })
                     .catch(err=> alert('Login failed: ' + err.message));
                 } else {
-                    // fallback to localStorage demo
-                    const user = findUserByEmail(email);
-                    if(!user){ alert('No account found with that email. Please signup first.'); return; }
-                    if(user.password !== pwd){ alert('Credentials do not match.'); return; }
-                    setCurrentUser({ name: user.name, email: user.email });
-                    alert('Login successful! Welcome ' + (user.name||user.email));
-                    hidePopover();
+                    // For mobile number, we need to find user by mobile in Firestore first
+                    db.collection('users').where('mobile', '==', emailOrMobile).get()
+                    .then(snapshot => {
+                        if(snapshot.empty) {
+                            alert('No account found with that mobile number');
+                            return;
+                        }
+                        const userDoc = snapshot.docs[0];
+                        const email = userDoc.data().email;
+                        return auth.signInWithEmailAndPassword(email, pwd);
+                    })
+                    .then(()=>{ 
+                        alert('Login successful'); 
+                        hidePopover(); 
+                        // Update dropdown will be handled by auth state change
+                    })
+                    .catch(err=> alert('Login failed: ' + err.message));
                 }
                 return;
             }
@@ -463,48 +586,103 @@
             // Signup modal
             if(form.id === 'signupForm'){
                 e.preventDefault();
-                const name = (document.getElementById('signupName')||{}).value || '';
+                const fullName = (document.getElementById('signupFullName')||{}).value || '';
                 const email = (document.getElementById('signupEmail')||{}).value || '';
+                const mobile = (document.getElementById('signupMobile')||{}).value || '';
                 const pwd = (document.getElementById('signupPassword')||{}).value || '';
                 const conf = (document.getElementById('signupConfirm')||{}).value || '';
-                if(!name || !email || !pwd || !conf){ alert('Please fill all fields'); return; }
+                if(!fullName || !email || !mobile || !pwd || !conf){ alert('Please fill all fields'); return; }
                 if(pwd !== conf){ alert('Passwords do not match'); return; }
-                if(hasFirebase){
-                    auth.createUserWithEmailAndPassword(email, pwd)
-                    .then(cred => {
-                        const uid = cred.user.uid;
-                        return saveProfile(uid, { name: name, email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    })
-                    .then(()=>{ alert('Account created successfully. You are signed in.'); hideModal(); })
-                    .catch(err=> alert('Signup failed: ' + err.message));
-                } else {
-                    // fallback localStorage demo
-                    if(findUserByEmail(email)){ alert('An account with this email already exists. Please login.'); return; }
-                    createUser({ name: name, email: email, password: pwd });
-                    alert('Account created successfully. You can now login.');
-                    hideModal();
-                }
+                
+                auth.createUserWithEmailAndPassword(email, pwd)
+                .then(cred => {
+                    const uid = cred.user.uid;
+                    return saveProfile(uid, { fullName: fullName, email: email, mobile: mobile, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                })
+                .then(()=>{ 
+                    alert('Account created successfully. You are signed in.'); 
+                    hideModal(); 
+                    // Update dropdown will be handled by auth state change
+                })
+                .catch(err=> alert('Signup failed: ' + err.message));
                 return;
             }
 
             // Login modal (centered)
             if(form.id === 'loginForm'){
                 e.preventDefault();
-                const email = (document.getElementById('loginEmail')||{}).value || '';
+                const fullName = (document.getElementById('loginFullName')||{}).value || '';
+                const emailOrMobile = (document.getElementById('loginEmail')||{}).value || '';
                 const pwd = (document.getElementById('loginPassword')||{}).value || '';
-                if(!email || !pwd){ alert('Please enter email and password'); return; }
-                if(hasFirebase){
-                    auth.signInWithEmailAndPassword(email, pwd)
-                    .then(()=>{ alert('Login successful'); hideModal(); })
+                if(!fullName || !emailOrMobile || !pwd){ alert('Please fill all fields'); return; }
+                
+                // Check if input is email or mobile number
+                const isEmail = emailOrMobile.includes('@');
+                if(isEmail){
+                    auth.signInWithEmailAndPassword(emailOrMobile, pwd)
+                    .then(()=>{ 
+                        alert('Login successful'); 
+                        hideModal(); 
+                        // Update dropdown will be handled by auth state change
+                    })
                     .catch(err=> alert('Login failed: ' + err.message));
                 } else {
-                    const user = findUserByEmail(email);
-                    if(!user){ alert('No account found with that email. Please signup first.'); return; }
-                    if(user.password !== pwd){ alert('Credentials do not match.'); return; }
-                    setCurrentUser({ name: user.name, email: user.email });
-                    alert('Login successful! Welcome ' + (user.name||user.email));
-                    hideModal();
+                    // For mobile number, we need to find user by mobile in Firestore first
+                    db.collection('users').where('mobile', '==', emailOrMobile).get()
+                    .then(snapshot => {
+                        if(snapshot.empty) {
+                            alert('No account found with that mobile number');
+                            return;
+                        }
+                        const userDoc = snapshot.docs[0];
+                        const email = userDoc.data().email;
+                        return auth.signInWithEmailAndPassword(email, pwd);
+                    })
+                    .then(()=>{ 
+                        alert('Login successful'); 
+                        hideModal(); 
+                        // Update dropdown will be handled by auth state change
+                    })
+                    .catch(err=> alert('Login failed: ' + err.message));
                 }
+                return;
+            }
+            // User account update form
+            if(form.id === 'userAccountForm'){
+                e.preventDefault();
+                const fullName = (document.getElementById('accountFullName')||{}).value || '';
+                const email = (document.getElementById('accountEmail')||{}).value || '';
+                const mobile = (document.getElementById('accountMobile')||{}).value || '';
+                const newPassword = (document.getElementById('accountPassword')||{}).value || '';
+                const confirmPassword = (document.getElementById('accountConfirmPassword')||{}).value || '';
+                
+                if(!fullName || !email || !mobile){ alert('Please fill all required fields'); return; }
+                if(newPassword && newPassword !== confirmPassword){ alert('New passwords do not match'); return; }
+                
+                const user = auth.currentUser;
+                if(!user) { alert('No user logged in'); return; }
+                
+                // Update email if changed
+                if(user.email !== email){
+                    user.updateEmail(email)
+                    .catch(err => alert('Error updating email: ' + err.message));
+                }
+                
+                // Update password if provided
+                if(newPassword){
+                    user.updatePassword(newPassword)
+                    .catch(err => alert('Error updating password: ' + err.message));
+                }
+                
+                // Update profile in Firestore
+                saveProfile(user.uid, { fullName: fullName, email: email, mobile: mobile })
+                .then(() => {
+                    alert('Account updated successfully');
+                    hideModal();
+                    // Refresh the dropdown
+                    updateLoginDropdown(true, { fullName: fullName, email: email, mobile: mobile });
+                })
+                .catch(err => alert('Error updating profile: ' + err.message));
                 return;
             }
         }, true);
