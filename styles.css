@@ -26,11 +26,13 @@
   .sidebar { 
     display: none !important; 
     position: fixed;
-    top: 0;
+    /* place sidebar below the topbar so the hamburger and title remain visible */
+    top: 56px;
     left: 0;
-    height: 100vh;
+    height: calc(100vh - 56px);
     width: 260px;
-    z-index: 1001;
+    /* keep below topbar (topbar z-index:10) but above content */
+    z-index: 9;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
@@ -623,6 +625,14 @@ body.login-page .bottom-boxes {
   .scroll-dot {
     width: 8px;
     height: 8px;
+  }
+}
+
+/* Ensure media items in mobile fill available space below the topbar so
+   the full media area is visible when scrolled */
+@media (max-width: 900px) {
+  .media-item {
+    height: calc(100vh - 56px);
   }
 }
 
