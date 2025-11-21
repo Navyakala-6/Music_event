@@ -281,6 +281,44 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleSidebar(false);
       }
     });
+
+    // Global touch handlers for opening/closing the sidebar by swiping the screen.
+    // - Swipe right from the left edge (startX < 40) to open the sidebar.
+    // - When sidebar is open, swipe left anywhere to close it.
+    let screenStartX = 0;
+    let screenStartY = 0;
+    let screenDragging = false;
+
+    document.addEventListener('touchstart', (e) => {
+      if (!e.touches || !e.touches[0]) return;
+      screenStartX = e.touches[0].clientX;
+      screenStartY = e.touches[0].clientY;
+      screenDragging = true;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!screenDragging || !e.touches || !e.touches[0]) return;
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const deltaX = currentX - screenStartX;
+      const deltaY = currentY - screenStartY;
+
+      // Only consider primarily horizontal swipes
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Swipe right from left edge to open
+        if (screenStartX < 40 && deltaX > 40 && !isSidebarOpen) {
+          toggleSidebar(true);
+          screenDragging = false;
+        }
+        // Swipe left to close when sidebar open
+        if (isSidebarOpen && deltaX < -40) {
+          toggleSidebar(false);
+          screenDragging = false;
+        }
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => { screenDragging = false; }, { passive: true });
   }
 
   /* ---------------- Instagram Reels Style Media Scroller ---------------- */
@@ -406,23 +444,17 @@ document.addEventListener("DOMContentLoaded", () => {
       isScrolling = false;
     }, { passive: true });
     
-    // Mouse wheel support for desktop - more controlled scrolling
+    // Mouse wheel / trackpad support — allow native scrolling and snap after scroll ends.
     let wheelTimeout;
     mediaScroller.addEventListener("wheel", (e) => {
-      e.preventDefault();
-      
-      // Debounce wheel events to prevent rapid scrolling
+      // Do not call preventDefault() so trackpad/mouse wheel can perform natural scrolling.
       clearTimeout(wheelTimeout);
       wheelTimeout = setTimeout(() => {
-        if (e.deltaY > 50 && currentIndex < mediaItems.length - 1) {
-          // Scroll down - next item (require larger delta)
-          scrollToItem(currentIndex + 1);
-        } else if (e.deltaY < -50 && currentIndex > 0) {
-          // Scroll up - previous item (require larger delta)
-          scrollToItem(currentIndex - 1);
-        }
-      }, 100); // 100ms debounce
-    }, { passive: false });
+        // On wheel end, snap to nearest item
+        const newIndex = Math.round(mediaScroller.scrollTop / window.innerHeight);
+        if (newIndex !== currentIndex) scrollToItem(newIndex);
+      }, 120);
+    }, { passive: true });
     
     // Keyboard support
     document.addEventListener("keydown", (e) => {

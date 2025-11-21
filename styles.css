@@ -467,6 +467,9 @@ body.login-page .bottom-boxes {
   position: relative;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
 }
 
 .media-scroller::-webkit-scrollbar {
