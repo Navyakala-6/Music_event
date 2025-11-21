@@ -6,6 +6,7 @@
   transform: translateY(-50%);
   z-index: 1002;
   display: none;
+  transition: all 0.3s ease;
 }
 .bar-btn {
   background: #e5e7eb;
@@ -14,11 +15,29 @@
   height: 2cm;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.bar-btn:hover {
+  background: #d1d5db;
+  transform: scale(1.1);
 }
 @media (max-width: 900px) {
   .sidebar-bar-toggle { display: block; }
-  .sidebar { display: none !important; }
-  .sidebar.expanded { display: flex !important; }
+  .sidebar { 
+    display: none !important; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    z-index: 1001;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.expanded { 
+    display: flex !important; 
+    transform: translateX(0);
+  }
   .sidebar-bar-toggle.hide { display: none !important; }
   .topbar .brand {
     position: static;
@@ -33,7 +52,7 @@
 html, body { height: 100%; }
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: "Times New Roman", 'Times New Roman', Times, serif;
   color: #f8fafc;
   background: #000;
   position: relative;
@@ -115,6 +134,9 @@ body.login-page .bottom-boxes {
   z-index: 1003;
   margin: 0;
   padding: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  font-family: "Times New Roman", 'Times New Roman', Times, serif;
 }
 @media (max-width: 900px) {
   .bottom-boxes {
@@ -129,7 +151,7 @@ body.login-page .bottom-boxes {
   height: 100%;
   background: #232326;
   color: #fff;
-  font-size: 2.2rem;
+  font-size: 1.2rem;
   font-weight: 600;
   border-radius: 0;
   display: flex;
@@ -186,12 +208,13 @@ body.login-page .bottom-boxes {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: -1; /* behind UI */
+    z-index: 1; /* keep animated symbols behind main media by default */
+    display: block !important; /* Force visibility */
   }
   .music-symbol {
     position: absolute;
     font-size: 36px;
-    opacity: 0.14;
+    opacity: 0.25;
     transform-origin: center center;
     /* apply floating animation only on desktop */
     animation-name: floatRandom;
@@ -201,6 +224,11 @@ body.login-page .bottom-boxes {
     animation-delay: 0s;
     will-change: transform, opacity;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.45));
+  }
+  
+  /* Apply the variable-driven animation to symbols with CSS variables set */
+  .music-symbol[style*="--x0"] {
+    animation-name: floatVar;
   }
   /* slight variance for odd/even items */
   .music-symbol:nth-child(odd) { animation-duration: 10s; }
@@ -369,6 +397,13 @@ body.login-page .bottom-boxes {
   height: calc(100vh - 56px);
 }
 
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 56px);
+  }
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -415,7 +450,213 @@ body.login-page .bottom-boxes {
 .instrument-emoji { font-size: 20px; }
 .instrument-name { font-weight: 500; display: inline; }
 
-.content { padding: 20px; overflow: auto; }
+.content { 
+  padding: 0; 
+  overflow: hidden; 
+  height: calc(100vh - 56px);
+  position: relative;
+}
+
+/* Instagram Reels Style Media Scroller */
+.media-scroller {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  position: relative;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.media-scroller::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.media-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-item {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #000;
+}
+
+.media-wrapper {
+  position: relative;
+  width: 80%;
+  height: 80%;
+  max-width: 600px;
+  max-height: 600px;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  /* Ensure the media area is opaque and sits above the animated background */
+  background-color: #000; 
+  z-index: 5; 
+}
+
+.media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 16px;
+  /* enforce an opaque background for images/videos that might have transparency */
+  background-color: #000;
+  display: block;
+}
+
+.media-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.media-info {
+  text-align: center;
+  width: 100%;
+}
+
+.media-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+}
+
+.media-description {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.95;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  color: #f0f0f0;
+}
+
+.scroll-indicator {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 4px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.scroll-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scroll-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.scroll-dot.active {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.scroll-dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .media-item {
+    padding: 20px;
+  }
+  
+  .media-wrapper {
+    width: 90%;
+    height: 70%;
+  }
+  
+  .media-overlay {
+    padding: 16px;
+  }
+  
+  .media-title {
+    font-size: 1.1rem;
+  }
+  
+  .media-description {
+    font-size: 0.85rem;
+  }
+  
+  .scroll-indicator {
+    right: 16px;
+    padding: 6px 3px;
+  }
+  
+  .scroll-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 901px) {
+  .media-item {
+    height: calc(100vh - 56px);
+    padding: 40px;
+  }
+  
+  .media-wrapper {
+    width: 85%;
+    height: 85%;
+    max-width: 800px;
+    max-height: 800px;
+  }
+  
+  .media-overlay {
+    padding: 24px;
+  }
+  
+  .media-title {
+    font-size: 1.4rem;
+  }
+  
+  .media-description {
+    font-size: 1rem;
+  }
+
+  /* Slightly larger bottom box text on desktop for readability */
+  .number-box { font-size: 1.6rem; }
+}
+
+/* Hide the scroll indicator on touch devices so users can scroll by touch */
+@media (pointer: coarse) {
+  .scroll-indicator { display: none !important; }
+}
 
 /* Modal */
 .modal.hidden { display: none; }

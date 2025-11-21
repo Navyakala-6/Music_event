@@ -56,10 +56,10 @@
         <div class="menu-wrapper">
             <button class="hamburger" id="menuToggle" aria-haspopup="true" aria-expanded="false" aria-label="Open menu">☰</button>
             <div class="menu" id="menu">
-                <button class="menu-item" id="A">A</button>
-                <button class="menu-item" id="B">B</button>
-                <button class="menu-item" id="C">C</button>
-                <button class="menu-item" id="D">D</button>
+                <button class="menu-item" id="Ohm">Ohm</button>
+                <button class="menu-item" id="Sri">Sri</button>
+                <button class="menu-item" id="Chinna">Chinna</button>
+                <button class="menu-item" id="Ammu">Ammu</button>
                 <button class="menu-item" id="E">E</button>
                 <button class="menu-item" id="F">F</button>
                 <button class="menu-item" id="G">G</button>
@@ -419,18 +419,16 @@
         function hideContent(){
             const layout = document.querySelector('.layout');
             const bottom = document.querySelector('.bottom-boxes');
-            const bg = document.querySelector('.music-bg');
+            // Keep music background visible always
             if(layout) layout.style.display = 'none';
             if(bottom) bottom.style.display = 'none';
-            if(bg) bg.style.display = 'none';
         }
         function showContent(){
             const layout = document.querySelector('.layout');
             const bottom = document.querySelector('.bottom-boxes');
-            const bg = document.querySelector('.music-bg');
+            // Keep music background visible always
             if(layout) layout.style.display = '';
             if(bottom) bottom.style.display = '';
-            if(bg) bg.style.display = '';
         }
 
         // Keep track of auth state (Firebase only - no localStorage fallback)
@@ -710,9 +708,9 @@
 
     <!-- Numbered boxes at bottom -->
     <div class="bottom-boxes">
-        <div class="number-box">1</div>
-        <div class="number-box">2</div>
-        <div class="number-box">3</div>
+        <div class="number-box">Chadi Thalinkana</div>
+        <div class="number-box">Shiv Dhol Thasha</div>
+        <div class="number-box">Gabra</div>
         <div class="number-box">4</div>
         <div class="number-box">5</div>
         <div class="number-box">6</div>
