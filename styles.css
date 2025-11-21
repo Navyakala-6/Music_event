@@ -29,7 +29,8 @@
     /* place sidebar below the topbar so the hamburger and title remain visible */
     top: 56px;
     left: 0;
-    height: calc(100vh - 56px);
+    /* leave room for bottom boxes as well */
+    height: calc(100vh - 56px - 80px);
     width: 260px;
     /* keep below topbar (topbar z-index:10) but above content */
     z-index: 9;
@@ -392,6 +393,70 @@ body.login-page .bottom-boxes {
 }
 .login-menu.open { display: block; }
 
+/* Mobile: transform the login menu into a semi-circular (spiral) expandable menu
+   so tapping the circular profile button reveals options around it. This only
+   applies on smaller screens to keep desktop dropdown behavior unchanged. */
+@media (max-width: 900px) {
+  .login-menu-wrapper { z-index: 11; }
+  .login-hamburger {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .login-menu-wrapper .login-menu {
+    /* position menu origin at the center of the hamburger button */
+    position: absolute;
+    left: 0;
+    top: 52px;
+    width: 0;
+    height: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: block; /* keep in document flow for positioning child buttons */
+    pointer-events: none;
+  }
+
+  .login-menu-wrapper .login-menu .menu-item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    padding: 0;
+    background: #18181b;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(0,0) scale(0);
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+    pointer-events: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .login-menu-wrapper .login-menu.open { pointer-events: auto; }
+  .login-menu-wrapper .login-menu.open .menu-item { opacity: 1; pointer-events: auto; }
+
+  /* Position menu items in a semi-circle below the button. Angles chosen for
+     up to 5 items; items rotate back so their content remains upright. */
+  .login-menu-wrapper .login-menu.open .menu-item:nth-child(1) { transform: rotate(25deg) translate(64px) rotate(-25deg) scale(1); }
+  .login-menu-wrapper .login-menu.open .menu-item:nth-child(2) { transform: rotate(65deg) translate(64px) rotate(-65deg) scale(1); }
+  .login-menu-wrapper .login-menu.open .menu-item:nth-child(3) { transform: rotate(105deg) translate(64px) rotate(-105deg) scale(1); }
+  .login-menu-wrapper .login-menu.open .menu-item:nth-child(4) { transform: rotate(145deg) translate(64px) rotate(-145deg) scale(1); }
+  .login-menu-wrapper .login-menu.open .menu-item:nth-child(5) { transform: rotate(185deg) translate(64px) rotate(-185deg) scale(1); }
+}
+
 .layout {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -632,7 +697,8 @@ body.login-page .bottom-boxes {
    the full media area is visible when scrolled */
 @media (max-width: 900px) {
   .media-item {
-    height: calc(100vh - 56px);
+    /* fill the area between topbar and bottom boxes */
+    height: calc(100vh - 56px - 80px);
   }
 }
 
@@ -727,5 +793,88 @@ body.login-page .bottom-boxes {
   z-index: 1002;
 }
 .fab-menu.open { display: block; }
+
+/* Radial login button and semicircular menu (applies across screen sizes) */
+.login-hamburger {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.login-menu-wrapper { position: relative; z-index: 1005; }
+
+.login-menu-wrapper .login-menu {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: block; /* keep for positioning child buttons */
+  pointer-events: none;
+}
+
+.login-menu .menu-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+  background: #18181b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(0,0) scale(0);
+  opacity: 0;
+  transition: transform .28s cubic-bezier(.2,.9,.2,1), opacity .18s ease;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.login-menu.open { pointer-events: auto; }
+.login-menu.open .menu-item { opacity: 1; pointer-events: auto; }
+
+/* Default semicircle positions for up to 5 items. Tuned for 2 items (My Account and Logout).
+   Angles are measured clockwise from right (CSS rotate). We rotate back so label stays upright. */
+.login-menu-wrapper.open .login-menu.open .menu-item:nth-child(1) { transform: rotate(70deg) translate(64px) rotate(-70deg) scale(1); }
+.login-menu-wrapper.open .login-menu.open .menu-item:nth-child(2) { transform: rotate(110deg) translate(64px) rotate(-110deg) scale(1); }
+.login-menu-wrapper.open .login-menu.open .menu-item:nth-child(3) { transform: rotate(140deg) translate(64px) rotate(-140deg) scale(1); }
+.login-menu-wrapper.open .login-menu.open .menu-item:nth-child(4) { transform: rotate(160deg) translate(64px) rotate(-160deg) scale(1); }
+.login-menu-wrapper.open .login-menu.open .menu-item:nth-child(5) { transform: rotate(190deg) translate(64px) rotate(-190deg) scale(1); }
+
+/* If only one item exists, place it directly above the button */
+.login-menu-wrapper.open .login-menu.open .menu-item:only-child { transform: rotate(90deg) translate(64px) rotate(-90deg) scale(1); }
+
+/* Slightly larger radius for desktop */
+@media (min-width: 900px) {
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(1),
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(2),
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(3),
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(4),
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(5) {
+    transform: translate(0,0) scale(0);
+  }
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(1) { transform: rotate(70deg) translate(84px) rotate(-70deg) scale(1); }
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(2) { transform: rotate(110deg) translate(84px) rotate(-110deg) scale(1); }
+  .login-menu-wrapper.open .login-menu.open .menu-item:nth-child(3) { transform: rotate(140deg) translate(84px) rotate(-140deg) scale(1); }
+}
+
+.login-menu-wrapper.open .login-hamburger { box-shadow: 0 8px 24px rgba(0,0,0,0.45); transform: scale(1.03); }
 
 

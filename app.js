@@ -451,7 +451,8 @@ document.addEventListener("DOMContentLoaded", () => {
       clearTimeout(wheelTimeout);
       wheelTimeout = setTimeout(() => {
         // On wheel end, snap to nearest item
-        const newIndex = Math.round(mediaScroller.scrollTop / window.innerHeight);
+          const pageHeight = mediaScroller.clientHeight || window.innerHeight;
+          const newIndex = Math.round(mediaScroller.scrollTop / pageHeight);
         if (newIndex !== currentIndex) scrollToItem(newIndex);
       }, 120);
     }, { passive: true });
@@ -473,10 +474,11 @@ document.addEventListener("DOMContentLoaded", () => {
       currentIndex = index;
       
       // Update scroll position
-      mediaScroller.scrollTo({
-        top: index * window.innerHeight,
-        behavior: "smooth"
-      });
+        const pageHeight = mediaScroller.clientHeight || window.innerHeight;
+        mediaScroller.scrollTo({
+          top: index * pageHeight,
+          behavior: "smooth"
+        });
       
       // Update scroll dots
       scrollDots.forEach((dot, i) => {

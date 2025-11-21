@@ -703,6 +703,27 @@
                 return;
             }
         }, true);
+                // Toggle radial login menu on profile button click
+                const loginMenuToggleBtn = document.getElementById('loginMenuToggle');
+                const loginMenuEl = document.getElementById('loginMenu');
+                const loginWrapperEl = document.querySelector('.login-menu-wrapper');
+                if(loginMenuToggleBtn && loginMenuEl && loginWrapperEl){
+                    loginMenuToggleBtn.addEventListener('click', function(e){
+                        e.stopPropagation();
+                        const isOpen = loginMenuEl.classList.toggle('open');
+                        if(isOpen) loginWrapperEl.classList.add('open'); else loginWrapperEl.classList.remove('open');
+                    });
+                    // Close when clicking outside (capture to run early)
+                    document.addEventListener('click', function(e){
+                        if(!loginWrapperEl.contains(e.target)){
+                            loginMenuEl.classList.remove('open');
+                            loginWrapperEl.classList.remove('open');
+                        }
+                    }, true);
+                    // ESC to close
+                    loginMenuToggleBtn.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ loginMenuEl.classList.remove('open'); loginWrapperEl.classList.remove('open'); } });
+                }
+
         })();
         </script>
 
