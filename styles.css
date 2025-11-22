@@ -649,9 +649,12 @@ body.login-page .bottom-boxes {
     padding: 20px;
   }
   
+  /* Reduce media size on small screens so content remains fully visible */
   .media-wrapper {
-    width: 86%;
-    height: 60%;
+    width: 78%;
+    height: 52%;
+    max-width: 520px;
+    max-height: 520px;
   }
   
   .media-overlay {

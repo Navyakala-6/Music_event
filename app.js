@@ -327,7 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
     menu.addEventListener('click', (e) => {
       const btn = e.target.closest('.menu-item');
       if (!btn) return;
-      const label = btn.textContent.trim();
+      // prefer explicit folder mapping via data-folder, then id, then label text
+      const folderKey = (btn.dataset && btn.dataset.folder) ? btn.dataset.folder.trim() : (btn.id || btn.textContent.trim());
 
       // highlight active menu item
       menu.querySelectorAll('.menu-item').forEach(x => x.classList.toggle('active', x === btn));
@@ -336,18 +337,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll('.number-box').forEach(x => x.classList.remove('active'));
       document.querySelectorAll('.instrument-item').forEach(x => x.classList.remove('selected'));
 
-      // load media (if manifest entry missing, fallback to default scroller)
-      if (mediaManifest[label] && mediaManifest[label].length) {
-        loadMediaFor(label);
-      } else {
-        // fallback: try lowercase key
-        if (mediaManifest[label.toLowerCase()] && mediaManifest[label.toLowerCase()].length) {
-          loadMediaFor(label.toLowerCase());
-        } else {
-          // no media available in manifest for this label
-          initializeMediaScroller();
-        }
-      }
+      // attempt to load media for the folderKey (server listing fallback handled in loadMediaFor)
+      loadMediaFor(folderKey);
 
       // close menu after selection
       menu.classList.remove('open');
@@ -734,12 +725,9 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---------------- FAB button options ---------------- */
   const suggestionBtn = document.getElementById("suggestionBtn");
   const helpBtn = document.getElementById("helpBtn");
-  suggestionBtn?.addEventListener("click", () => {
-    alert("Suggestion clicked — open your suggestion flow here.");
-  });
-  helpBtn?.addEventListener("click", () => {
-    alert("Help clicked — open your help flow here.");
-  });
+  // Open suggestion/help modals directly when FAB items are clicked
+  suggestionBtn?.addEventListener("click", (e) => { e.stopPropagation(); showSuggestionModal(); });
+  helpBtn?.addEventListener("click", (e) => { e.stopPropagation(); showHelpModal(); });
 
   /* ---------------- Hook up bottom boxes and instrument clicks ---------------- */
   if (bottomBoxes) {
