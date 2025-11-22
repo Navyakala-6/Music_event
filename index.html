@@ -60,10 +60,10 @@
                 <button class="menu-item" id="Sri">Sri</button>
                 <button class="menu-item" id="Chinna">Chinna</button>
                 <button class="menu-item" id="Ammu">Ammu</button>
-                <button class="menu-item" id="E">E</button>
-                <button class="menu-item" id="F">F</button>
-                <button class="menu-item" id="G">G</button>
-                <button class="menu-item" id="H">H</button>
+                <button class="menu-item" id="Moon">Moon</button>
+                <button class="menu-item" id="Star">Star</button>
+                <button class="menu-item" id="Sun">Sun</button>
+                <button class="menu-item" id="Sky">Sky</button>
                 <button class="menu-item" id="I">I</button>
                 <button class="menu-item" id="J">J</button>
                 <button class="menu-item" id="K">K</button>
@@ -703,36 +703,15 @@
                 return;
             }
         }, true);
-                // Toggle radial login menu on profile button click
-                const loginMenuToggleBtn = document.getElementById('loginMenuToggle');
-                const loginMenuEl = document.getElementById('loginMenu');
-                const loginWrapperEl = document.querySelector('.login-menu-wrapper');
-                if(loginMenuToggleBtn && loginMenuEl && loginWrapperEl){
-                    loginMenuToggleBtn.addEventListener('click', function(e){
-                        e.stopPropagation();
-                        const isOpen = loginMenuEl.classList.toggle('open');
-                        if(isOpen) loginWrapperEl.classList.add('open'); else loginWrapperEl.classList.remove('open');
-                    });
-                    // Close when clicking outside (capture to run early)
-                    document.addEventListener('click', function(e){
-                        if(!loginWrapperEl.contains(e.target)){
-                            loginMenuEl.classList.remove('open');
-                            loginWrapperEl.classList.remove('open');
-                        }
-                    }, true);
-                    // ESC to close
-                    loginMenuToggleBtn.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ loginMenuEl.classList.remove('open'); loginWrapperEl.classList.remove('open'); } });
-                }
-
-        })();
+                })();
         </script>
 
     <!-- Numbered boxes at bottom -->
-    <div class="bottom-boxes">
+    <div id="bottomBoxes" class="bottom-boxes">
         <div class="number-box">Chadi Thalinkana</div>
         <div class="number-box">Shiv Dhol Thasha</div>
         <div class="number-box">Gabra</div>
-        <div class="number-box">4</div>
+        <div class="number-box">4....</div>
         <div class="number-box">5</div>
         <div class="number-box">6</div>
         <div class="number-box">7</div>
@@ -761,7 +740,7 @@
     </div>
 
     <!-- Musical symbols background -->
-    <div class="music-bg">
+    <div id="musicBg" class="music-bg">
         <span class="music-symbol" style="top:7%;left:12%;">🎵</span>
         <span class="music-symbol" style="top:18%;left:77%;">🎶</span>
         <span class="music-symbol" style="top:62%;left:8%;">🎷</span>

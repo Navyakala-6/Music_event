@@ -18,44 +18,53 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---------------- Alphabetic dropdown (A–Z) ---------------- */
   function populateAlphabetMenu() {
     if (!menu) return;
-    menu.innerHTML = "";
-    for (let i = 65; i <= 90; i++) {
-      const btn = document.createElement("button");
-      btn.className = "menu-item";
-      btn.textContent = String.fromCharCode(i);
-      menu.appendChild(btn);
+    // If the page already contains custom .menu-item elements (author edited HTML), keep them.
+    const existing = menu.querySelectorAll('.menu-item');
+    if (existing && existing.length > 0) {
+      // still attach touch/mouse scroll behavior to the existing menu
+      attachMenuScrollHandlers(menu);
+      return;
     }
-    
-    // Add scroll functionality to the menu
+
+    // Default alphabet names; allow first few to be customized here
+    const custom = ["Ohm", "Sri", "Chinna", "Ammu", "Moon", "Star", "Sun", "Sky"];
+    const labels = [];
+    for (let i = 0; i < 26; i++) {
+      if (i < custom.length && custom[i]) labels.push(custom[i]);
+      else labels.push(String.fromCharCode(65 + i));
+    }
+
+    menu.innerHTML = "";
+    labels.forEach(label => {
+      const btn = document.createElement('button');
+      btn.className = 'menu-item';
+      btn.textContent = label;
+      menu.appendChild(btn);
+    });
+    attachMenuScrollHandlers(menu);
+  }
+  populateAlphabetMenu();
+
+  function attachMenuScrollHandlers(menuEl) {
+    if (!menuEl) return;
     let isScrolling = false;
     let startY = 0;
     let scrollTop = 0;
-    
-    menu.addEventListener('touchstart', (e) => {
+    menuEl.addEventListener('touchstart', (e) => {
       isScrolling = true;
-      startY = e.touches[0].pageY - menu.offsetTop;
-      scrollTop = menu.scrollTop;
+      startY = e.touches[0].pageY - menuEl.offsetTop;
+      scrollTop = menuEl.scrollTop;
     }, { passive: true });
-    
-    menu.addEventListener('touchmove', (e) => {
+    menuEl.addEventListener('touchmove', (e) => {
       if (!isScrolling) return;
       e.preventDefault();
-      const y = e.touches[0].pageY - menu.offsetTop;
+      const y = e.touches[0].pageY - menuEl.offsetTop;
       const walk = (y - startY) * 2;
-      menu.scrollTop = scrollTop - walk;
+      menuEl.scrollTop = scrollTop - walk;
     }, { passive: false });
-    
-    menu.addEventListener('touchend', () => {
-      isScrolling = false;
-    }, { passive: true });
-    
-    // Also add mouse wheel support
-    menu.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      menu.scrollTop += e.deltaY;
-    }, { passive: false });
+    menuEl.addEventListener('touchend', () => { isScrolling = false; }, { passive: true });
+    menuEl.addEventListener('wheel', (e) => { e.preventDefault(); menuEl.scrollTop += e.deltaY; }, { passive: false });
   }
-  populateAlphabetMenu();
 
   /* ---------------- Instrument list ---------------- */
   const listEl = document.getElementById("instrumentList");
@@ -93,12 +102,20 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ---------------- Bottom number boxes (1–29) ---------------- */
   const bottomBoxes = document.getElementById("bottomBoxes");
   if (bottomBoxes) {
-    bottomBoxes.innerHTML = "";
-    for (let i = 1; i <= 29; i++) {
-      const div = document.createElement("div");
-      div.className = "number-box";
-      div.textContent = i;
-      bottomBoxes.appendChild(div);
+    // If author already provided labelled boxes, keep them — otherwise create defaults
+    const existingBoxes = bottomBoxes.querySelectorAll('.number-box');
+    if (!existingBoxes || existingBoxes.length === 0) {
+      const demoLabels = [
+        'Chadi Thalinkana', 'Shiv Dhol Thasha', 'Gabra', '4....', '5', '6', '7', '8', '9', '10',
+        '11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29'
+      ];
+      bottomBoxes.innerHTML = '';
+      demoLabels.forEach(lbl => {
+        const div = document.createElement('div');
+        div.className = 'number-box';
+        div.textContent = lbl;
+        bottomBoxes.appendChild(div);
+      });
     }
   }
 
@@ -136,6 +153,143 @@ document.addEventListener("DOMContentLoaded", () => {
   populateMusicSymbols();
   window.addEventListener("resize", populateMusicSymbols);
 
+  /* ---------------- Media manifest + dynamic loader ---------------- */
+  // Generated manifest mapping folder/label -> array of media items (images/videos)
+  const mediaManifest = {
+    /* Bottom boxes: folders with 3 images each */
+    'Chadi Thalinkana': [
+      { type: 'image', src: 'assets/Chadi Thalinkana/WhatsApp Image 2025-11-22 at 14.31.56_3562779f.jpg', title: 'Chadi 1', description: 'Chadi Thalinkana' },
+      { type: 'image', src: 'assets/Chadi Thalinkana/WhatsApp Image 2025-11-22 at 14.31.57_3213cb1a.jpg', title: 'Chadi 2', description: 'Chadi Thalinkana' },
+      { type: 'image', src: 'assets/Chadi Thalinkana/WhatsApp Image 2025-11-22 at 14.31.57_dc91632e.jpg', title: 'Chadi 3', description: 'Chadi Thalinkana' }
+    ],
+    'Shiv Dhol Thasha': [
+      { type: 'image', src: 'assets/Shiv Dhol Thasha/WhatsApp Image 2025-11-22 at 14.31.58_ab50abcb.jpg', title: 'Shiv 1', description: 'Shiv Dhol Thasha' },
+      { type: 'image', src: 'assets/Shiv Dhol Thasha/WhatsApp Image 2025-11-22 at 14.31.58_4b4027cd.jpg', title: 'Shiv 2', description: 'Shiv Dhol Thasha' },
+      { type: 'image', src: 'assets/Shiv Dhol Thasha/WhatsApp Image 2025-11-22 at 14.31.57_f192b04f.jpg', title: 'Shiv 3', description: 'Shiv Dhol Thasha' }
+    ],
+    'Gabra': [
+      { type: 'image', src: 'assets/Gabra/WhatsApp Image 2025-11-22 at 14.31.59_12bbadca.jpg', title: 'Gabra 1', description: 'Gabra' },
+      { type: 'image', src: 'assets/Gabra/WhatsApp Image 2025-11-22 at 14.32.00_2b544b10.jpg', title: 'Gabra 2', description: 'Gabra' },
+      { type: 'image', src: 'assets/Gabra/WhatsApp Image 2025-11-22 at 14.31.59_12bbadca.jpg', title: 'Gabra 3', description: 'Gabra' }
+    ],
+
+    /* Instruments (map both folder name and lowercase id used in instrument list) */
+    'Piano': [
+      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.55_aacab3db.jpg', title: 'Piano 1', description: 'Piano' },
+      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.56_b726d2c3.jpg', title: 'Piano 2', description: 'Piano' },
+      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.56_6ebf8e76.jpg', title: 'Piano 3', description: 'Piano' }
+    ],
+    'piano': [] ,
+    'Guitar': [
+      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.49_14c19661.jpg', title: 'Guitar 1', description: 'Guitar' },
+      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.49_7c881c60.jpg', title: 'Guitar 2', description: 'Guitar' },
+      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.50_46fc9ccd.jpg', title: 'Guitar 3', description: 'Guitar' }
+    ],
+    'guitar': [],
+    'Violin': [
+      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.51_c63d7995.jpg', title: 'Violin 1', description: 'Violin' },
+      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.51_4fdc6638.jpg', title: 'Violin 2', description: 'Violin' },
+      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.50_92a947a6.jpg', title: 'Violin 3', description: 'Violin' }
+    ],
+    'violin': [],
+    'Trumpet': [
+      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.52_e8df4a95.jpg', title: 'Trumpet 1', description: 'Trumpet' },
+      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.52_fbc64624.jpg', title: 'Trumpet 2', description: 'Trumpet' },
+      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.53_d1d46468.jpg', title: 'Trumpet 3', description: 'Trumpet' }
+    ],
+    'trumpet': [],
+    'Saxophone': [
+      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.54_5239ac92.jpg', title: 'Sax 1', description: 'Saxophone' },
+      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.53_4e308af9.jpg', title: 'Sax 2', description: 'Saxophone' },
+      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.54_96259198.jpg', title: 'Sax 3', description: 'Saxophone' }
+    ],
+    'saxophone': [],
+    'Drums': [
+      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.55_26bbb54c.jpg', title: 'Drum 1', description: 'Drums' },
+      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.55_c097ec9c.jpg', title: 'Drum 2', description: 'Drums' },
+      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.56_546b306a.jpg', title: 'Drum 3', description: 'Drums' }
+    ],
+    'drum': []
+  };
+  // create lowercase aliases for instrument keys so list data-id names map to correct folders
+  mediaManifest['piano'] = mediaManifest['Piano'];
+  mediaManifest['guitar'] = mediaManifest['Guitar'];
+  mediaManifest['violin'] = mediaManifest['Violin'];
+  mediaManifest['trumpet'] = mediaManifest['Trumpet'];
+  mediaManifest['saxophone'] = mediaManifest['Saxophone'];
+  mediaManifest['drum'] = mediaManifest['Drums'];
+
+  function renderMediaAssets(mediaAssets) {
+    const content = document.querySelector('.content');
+    if (!content) return;
+    content.innerHTML = `
+      <div class="media-scroller">
+        <div class="media-container">
+          ${mediaAssets.map((asset, index) => `
+            <div class="media-item" data-index="${index}">
+              <div class="media-wrapper">
+                ${asset.type === 'video' ? 
+                  `<video class="media-content" autoplay muted loop playsinline>
+                     <source src="${asset.src}" type="video/mp4">
+                     Your browser does not support the video tag.
+                   </video>` :
+                  `<img class="media-content" src="${asset.src}" alt="${asset.title}" loading="lazy">`
+                }
+                <div class="media-overlay">
+                  <div class="media-info">
+                    <h3 class="media-title">${asset.title}</h3>
+                    <p class="media-description">${asset.description}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="scroll-indicator">
+          <div class="scroll-dots">
+            ${mediaAssets.map((_, index) => `<div class="scroll-dot" data-index="${index}"></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    initializeScrollBehavior();
+  }
+
+  function loadMediaFor(key) {
+    const assets = mediaManifest[key];
+    if (assets && assets.length) {
+      renderMediaAssets(assets);
+      return;
+    }
+
+    // If manifest doesn't have the key, try server-side folder listing (requires local helper server)
+    (async () => {
+      try {
+        const folder = encodeURIComponent(key);
+        const resp = await fetch(`/list-assets/${folder}`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.files && json.files.length) {
+            // build media objects
+            const built = json.files.map((f, i) => {
+              const lower = f.toLowerCase();
+              const type = /\.(mp4|webm|mov)$/i.test(lower) ? 'video' : 'image';
+              return { type, src: f, title: `${key} ${i+1}`, description: key };
+            });
+            // cache into manifest for future clicks
+            mediaManifest[key] = built;
+            renderMediaAssets(built);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('list-assets fetch failed', err);
+      }
+      // fallback to default scroller if no assets found
+      initializeMediaScroller();
+    })();
+  }
+
   /* ---------------- Menu & FAB interactions ---------------- */
   function closeAllDropdowns() {
     menu?.classList.remove("open");
@@ -165,6 +319,39 @@ document.addEventListener("DOMContentLoaded", () => {
         menu.classList.remove("open");
         menuToggle.setAttribute("aria-expanded", "false");
       }
+    });
+  }
+
+  // Menu wrapper click: load media for the selected label and highlight
+  if (menu) {
+    menu.addEventListener('click', (e) => {
+      const btn = e.target.closest('.menu-item');
+      if (!btn) return;
+      const label = btn.textContent.trim();
+
+      // highlight active menu item
+      menu.querySelectorAll('.menu-item').forEach(x => x.classList.toggle('active', x === btn));
+
+      // clear other selections
+      document.querySelectorAll('.number-box').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.instrument-item').forEach(x => x.classList.remove('selected'));
+
+      // load media (if manifest entry missing, fallback to default scroller)
+      if (mediaManifest[label] && mediaManifest[label].length) {
+        loadMediaFor(label);
+      } else {
+        // fallback: try lowercase key
+        if (mediaManifest[label.toLowerCase()] && mediaManifest[label.toLowerCase()].length) {
+          loadMediaFor(label.toLowerCase());
+        } else {
+          // no media available in manifest for this label
+          initializeMediaScroller();
+        }
+      }
+
+      // close menu after selection
+      menu.classList.remove('open');
+      menuToggle?.setAttribute('aria-expanded', 'false');
     });
   }
 
@@ -541,8 +728,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   
-  // Initialize media scroller
-  initializeMediaScroller();
+  // Initialize media scroller — prefer loading the 'Chadi Thalinkana' folder if present
+  if (mediaManifest['Chadi Thalinkana']) loadMediaFor('Chadi Thalinkana'); else initializeMediaScroller();
 
   /* ---------------- FAB button options ---------------- */
   const suggestionBtn = document.getElementById("suggestionBtn");
@@ -553,4 +740,154 @@ document.addEventListener("DOMContentLoaded", () => {
   helpBtn?.addEventListener("click", () => {
     alert("Help clicked — open your help flow here.");
   });
+
+  /* ---------------- Hook up bottom boxes and instrument clicks ---------------- */
+  if (bottomBoxes) {
+    bottomBoxes.addEventListener('click', (e) => {
+      const box = e.target.closest('.number-box');
+      if (!box) return;
+      const label = box.textContent.trim();
+      // highlight
+      bottomBoxes.querySelectorAll('.number-box').forEach(x => x.classList.toggle('active', x === box));
+      // clear other selections
+      if (menu) menu.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.instrument-item').forEach(x => x.classList.remove('selected'));
+      loadMediaFor(label);
+    });
+  }
+
+  if (listEl) {
+    listEl.addEventListener('click', (e) => {
+      const item = e.target.closest('.instrument-item');
+      if (!item) return;
+      const id = item.getAttribute('data-id');
+      // highlight selected instrument
+      listEl.querySelectorAll('.instrument-item').forEach(x => x.classList.toggle('selected', x === item));
+      // clear other selections
+      if (menu) menu.querySelectorAll('.menu-item').forEach(x => x.classList.remove('active'));
+      if (bottomBoxes) bottomBoxes.querySelectorAll('.number-box').forEach(x => x.classList.remove('active'));
+      loadMediaFor(id || item.textContent.trim());
+    });
+  }
+
+  /* ---------------- Suggestion & Help modals (FAB) ---------------- */
+  function showModalWithContent(title, html) {
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    if (!modalBackdrop || !modalTitle || !modalBody) return;
+    modalTitle.textContent = title;
+    modalBody.innerHTML = html;
+    modalBackdrop.style.display = '';
+    modalBackdrop.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function showSuggestionModal() {
+    showModalWithContent('Suggestion / Question', `
+      <form id="suggestionForm">
+        <div><label>Name *</label><input type="text" id="suggestionName" required></div>
+        <div><label>Email *</label><input type="email" id="suggestionEmail" required></div>
+        <div><label>Mobile *</label><input type="tel" id="suggestionPhone" required></div>
+        <div><label>Message *</label><textarea id="suggestionMessage" rows="4" required></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    `);
+  }
+
+  function showHelpModal() {
+    showModalWithContent('Contact / Help', `
+      <form id="helpForm">
+        <div><label>Name *</label><input type="text" id="helpName" required></div>
+        <div><label>Email *</label><input type="email" id="helpEmail" required></div>
+        <div><label>Mobile *</label><input type="tel" id="helpPhone" required></div>
+        <div><label>Message *</label><textarea id="helpMessage" rows="4" required></textarea></div>
+        <div style="margin-top:8px;">Admin contact: <strong>navyakalayatham@gmail.com</strong></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+      </form>
+    `);
+  }
+
+  suggestionBtn?.addEventListener('click', (e) => { e.stopPropagation(); showSuggestionModal(); });
+  helpBtn?.addEventListener('click', (e) => { e.stopPropagation(); showHelpModal(); });
+
+  // Handle suggestion/help form submission — try server POST to /send-message, fallback to mailto
+  document.addEventListener('submit', (e) => {
+    const form = e.target;
+    if (!form) return;
+    if (form.id === 'suggestionForm') {
+      e.preventDefault();
+      const name = (document.getElementById('suggestionName')||{}).value || '';
+      const email = (document.getElementById('suggestionEmail')||{}).value || '';
+      const phone = (document.getElementById('suggestionPhone')||{}).value || '';
+      const msg = (document.getElementById('suggestionMessage')||{}).value || '';
+      if (!name || !email || !phone || !msg) { alert('Please fill all fields'); return; }
+      // Try to send to server endpoint /send-message (server must be running)
+      (async () => {
+        try {
+          const resp = await fetch('/send-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, subject: 'Suggestion / Question from ' + name, message: msg, type: 'suggestion' })
+          });
+          if (resp.ok) {
+            alert('Suggestion sent. Thank you!');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            if (modalBackdrop) { modalBackdrop.classList.add('hidden'); modalBackdrop.style.display = 'none'; document.body.style.overflow = ''; }
+            return;
+          }
+          // server responded with error — fall back to mailto
+        } catch (err) {
+          console.warn('POST /send-message failed', err);
+        }
+
+        // Fallback: open mail client if server unavailable
+        const subject = encodeURIComponent('Suggestion / Question from ' + name);
+        const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nMobile: ' + phone + '\n\nMessage:\n' + msg);
+        window.location.href = 'mailto:navyakalayatham@gmail.com?subject=' + subject + '&body=' + body;
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        if (modalBackdrop) { modalBackdrop.classList.add('hidden'); modalBackdrop.style.display = 'none'; document.body.style.overflow = ''; }
+      })();
+      return;
+    }
+    if (form.id === 'helpForm') {
+      e.preventDefault();
+      const name = (document.getElementById('helpName')||{}).value || '';
+      const email = (document.getElementById('helpEmail')||{}).value || '';
+      const phone = (document.getElementById('helpPhone')||{}).value || '';
+      const msg = (document.getElementById('helpMessage')||{}).value || '';
+      if (!name || !email || !phone || !msg) { alert('Please fill all fields'); return; }
+      (async () => {
+        try {
+          const resp = await fetch('/send-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, subject: 'Help request from ' + name, message: msg, type: 'help' })
+          });
+          if (resp.ok) {
+            alert('Help request sent. We will contact you soon.');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            if (modalBackdrop) { modalBackdrop.classList.add('hidden'); modalBackdrop.style.display = 'none'; document.body.style.overflow = ''; }
+            return;
+          }
+        } catch (err) {
+          console.warn('POST /send-message failed', err);
+        }
+
+        // fallback to mail client if server not available
+        const subject = encodeURIComponent('Help request from ' + name);
+        const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nMobile: ' + phone + '\n\nMessage:\n' + msg + '\n\nAdmin Email: navyakalayatham@gmail.com');
+        window.location.href = 'mailto:navyakalayatham@gmail.com?subject=' + subject + '&body=' + body;
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        if (modalBackdrop) { modalBackdrop.classList.add('hidden'); modalBackdrop.style.display = 'none'; document.body.style.overflow = ''; }
+      })();
+      return;
+    }
+  }, true);
 });
