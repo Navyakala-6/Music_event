@@ -1,0 +1,425 @@
+.landing-page {
+  min-height: 100vh;
+  background: #000;
+  color: white;
+  font-family: 'Arial', sans-serif;
+  overflow-y: auto;
+}
+
+.headerlanding {
+  display: flex;
+  padding: 0px 15px;
+  align-items: center;
+  height: 60px;
+  background: #000;
+  z-index: 100;
+  position: sticky;
+  top: 0;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 120px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.login-hamburger {
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.title {
+  font-family: serif;
+  font-size: 2.6rem;
+  letter-spacing: 1.5px;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  width: 95%;
+  text-align: center;
+}
+
+.footerLanding {
+  height: 60px;
+  background: #071428;
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  z-index: 1005;
+  padding: 0 16px;
+  gap: 32px;
+}
+
+.bodylandng {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  gap: 20px;
+}
+
+.landing-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sri-logo {
+  height: 200px;
+  width: auto;
+  object-fit: contain;
+}
+
+.banner-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.banner-subtitle {
+  font-size: 1.2rem;
+  margin: 0.5rem 0 0 0;
+  opacity: 0.9;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.auth-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.login-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.signup-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.signup-btn:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+}
+
+.auth-modal-overlay {
+     position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.auth-modal {
+   border-radius: 10px;
+    max-width: 420px;
+    width: 92%;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    font-family: inherit;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 1px solid #444;
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: white;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid grey;
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  background: black;
+  color: white;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+.error-message {
+  background: darkgrey;
+  color: white;
+  padding: 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  background: grey;
+  color: black;
+  border: 1px solid #ddd;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+.submit-btn {
+  background: black;
+  color: white;
+  border: 1px solid black;
+}
+
+.submit-btn:hover {
+  background: #5a6fd8;
+}
+
+.media-scroller-horizontal {
+  width: 100%;
+  height: 50vh;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  -webkit-scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  background: #111;
+  border-radius: 16px;
+  margin: 0 8px;
+}
+
+/* Smooth scrolling media scroller */
+.media-scroller {
+  width: 100%;
+  background: transparent;
+}
+
+.media-scroller .media-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 16px 0 40px 0;
+  gap: 24px;
+}
+
+.media-scroller .media-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10%;
+  box-sizing: border-box;
+}
+
+.media-scroller .media-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background-color: #000;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-scroller .media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.media-scroller .media-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.media-scroller .media-wrapper:hover .media-overlay {
+  transform: translateY(0);
+}
+
+.media-scroller .media-info {
+  color: white;
+}
+
+.media-scroller .media-title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.media-scroller .media-description {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .media-scroller .media-wrapper {
+    width: 85%;
+    aspect-ratio: 1;
+    max-width: 400px;
+  }
+}
+
+
+.media-scroller-horizontal::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.media-scroller-horizontal .media-container {
+  display: flex;
+  height: 100%;
+}
+
+.media-scroller-horizontal .media-item {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-scroller-horizontal .media-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.media-scroller-horizontal .media-wrapper:active {
+  cursor: grabbing;
+}
+
+.media-scroller-horizontal .media-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .media-scroller-horizontal {
+    height: 40vh;
+  }
+  
+  .sri-logo {
+    height: 30vh;
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  color: #666;
+}

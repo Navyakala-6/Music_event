@@ -1,0 +1,1055 @@
+L /* Small vertical bar for sidebar toggle */
+.sidebar-bar-toggle {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 1002;
+  display: none;
+  transition: all 0.3s ease;
+}
+.bar-btn {
+  background: #e5e7eb;
+  border-radius: 8px;
+  width: 2mm;
+  height: 2cm;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.bar-btn:hover {
+  background: #d1d5db;
+  transform: scale(1.1);
+}
+@media (max-width: 900px) {
+  .sidebar-bar-toggle { display: block; }
+  .sidebar { 
+    display: none !important; 
+    position: fixed;
+    /* place sidebar below the topbar so the hamburger and title remain visible */
+    top: 56px;
+    left: 0;
+    /* leave room for bottom boxes as well */
+    height: calc(100vh - 56px - 80px - 60px);
+    width: 260px;
+    /* keep below topbar (topbar z-index:10) but above content */
+    z-index: 9;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.expanded { 
+    display: flex !important; 
+    transform: translateX(0);
+  }
+  .sidebar-bar-toggle.hide { display: none !important; }
+  .topbar .brand {
+    position: static;
+    left: unset;
+    transform: none;
+    margin: 0 auto;
+    width: 100%;
+    justify-content: center;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: auto; min-height: 100vh; }
+body {
+  margin: 0;
+  font-family: "Times New Roman", 'Times New Roman', Times, serif;
+  color: #f8fafc;
+  background: #000;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Blank background for login/signup pages */
+body.login-page {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+body.login-page .music-bg {
+  display: none !important;
+}
+
+body.login-page .bottom-boxes {
+  display: none !important;
+}
+
+/* Modal styling for authentication */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Ensure modals are always centered and above transformed/overflowing containers */
+.modal {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 6000 !important;
+  pointer-events: auto !important;
+}
+.modal .modal-card {
+  z-index: 6001 !important;
+  max-height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+}
+
+/* Generic overlay/modal fixes for various modal implementations */
+.account-modal-overlay,
+.login-modal-overlay,
+.auth-modal-overlay,
+.account-modal-overlay,
+.modal-backdrop,
+.login-popover {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 6000 !important;
+  pointer-events: auto !important;
+  background: rgba(0,0,0,0.6) !important;
+}
+
+.account-modal,
+.login-modal,
+.auth-modal,
+.modal-card,
+.popover-card {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 6001 !important;
+  max-height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+  margin: 0 16px !important;
+}
+
+/* If a modal is meant to be a small popover (not full-screen), ensure it stays within viewport */
+.login-popover .popover-card,
+.menu.login-menu,
+.menu {
+  max-width: calc(100vw - 32px) !important;
+  max-height: calc(100vh - 120px) !important;
+  overflow: auto !important;
+}
+
+.modal-card {
+  background: #2d2d2d !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+  border-radius: 10px;
+  max-width: 420px;
+  width: 92%;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  font-family: inherit;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.modal-body {
+  padding: 16px 0 0 0;
+}
+
+.modal-body label {
+  display: block;
+  margin: 10px 0 6px 0;
+  font-size: 0.95rem;
+  color: #e0e0e0 !important;
+}
+
+.modal-body input {
+  width: 100%;
+  padding: 10px 12px;
+  background: #3a3a3a !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+  border-radius: 8px;
+}
+
+.modal-body input:focus {
+  border-color: #666 !important;
+  outline: none !important;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: #4a4a4a !important;
+  color: #ffffff !important;
+  border: 1px solid #666 !important;
+}
+
+.btn-secondary {
+  background: #555 !important;
+  color: #ffffff !important;
+  border: 1px solid #777 !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid #555 !important;
+}
+
+.modal-body label {
+  color: #e0e0e0 !important;
+}
+
+.modal-body input {
+  background: #3a3a3a !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+.modal-body input:focus {
+  border-color: #666 !important;
+  outline: none !important;
+}
+
+.btn-primary {
+  background: #4a4a4a !important;
+  color: #ffffff !important;
+  border: 1px solid #666 !important;
+}
+
+.btn-secondary {
+  background: #555 !important;
+  color: #ffffff !important;
+  border: 1px solid #777 !important;
+}
+
+.btn-link {
+  color: #8a8a8a !important;
+}
+
+
+/* Bottom boxes start from right edge of sidebar */
+/* Bottom boxes: desktop start from sidebar, mobile full width */
+.bottom-boxes {
+  position: fixed;
+  left: 260px;
+  bottom: 50px;
+  width: calc(100vw - 260px);
+  height: 50px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1003;
+  margin: 0;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(10px);
+  font-family: "Times New Roman", 'Times New Roman', Times, serif;
+  border-top: 1px solid #333;
+}
+
+/* Custom smaller scrollbar for bottom boxes */
+.bottom-boxes::-webkit-scrollbar {
+  height: 4px;
+}
+
+.bottom-boxes::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bottom-boxes::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+}
+
+.bottom-boxes::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+@media (max-width: 900px) {
+  .bottom-boxes {
+    left: 0;
+    width: 100vw;
+    /* Keep horizontal scroll on mobile */
+    overflow-x: auto;
+  }
+  .bottom-boxes {
+    bottom: 60px;
+  }
+}
+.number-box {
+  flex: 0 0 20%;
+  height: 100%;
+  background: #232326;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  border-right: 1px solid #444;
+  margin: 0;
+  padding: 0;
+}
+.number-box:last-child {
+  border-right: none;
+}
+/* Disabled music symbol animations - removed for performance */
+.music-symbol:nth-child(12) { animation: none !important; }
+.music-symbol:nth-child(13) { animation: none !important; }
+.music-symbol:nth-child(14) { animation: none !important; }
+.music-symbol:nth-child(15) { animation: none !important; }
+.music-symbol:nth-child(16) { animation: none !important; }
+.music-symbol:nth-child(17) { animation: none !important; }
+.music-symbol:nth-child(18) { animation: none !important; }
+.music-symbol:nth-child(19) { animation: none !important; }
+.music-symbol:nth-child(20) { animation: none !important; }
+
+/* Desktop-only animated musical background - DISABLED FOR PERFORMANCE */
+@media (min-width: 901px) {
+  .music-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    display: none !important;
+  }
+  .music-symbol {
+    position: absolute;
+    font-size: 36px;
+    opacity: 0.25;
+    transform-origin: center center;
+    animation: none !important;
+    display: none !important;
+  }
+  
+  .music-symbol[style*="--x0"] {
+    animation: none !important;
+  }
+  .music-symbol:nth-child(odd) { animation: none !important; }
+  .music-symbol:nth-child(even) { animation: none !important; }
+  .music-symbol.extra { display: none !important; }
+  .music-symbol.extra-top-left { display: none !important; }
+}
+/* hide extra symbols on smaller screens */
+@media (max-width: 900px) {
+  .music-symbol.extra { display: none !important; }
+  .music-symbol.extra-top-left { display: none !important; }
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #000;
+  color: #f8fafc;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+.header-left { width: 36px; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.brand .logo {
+  font-size: 28px;
+}
+.brand .title {
+  font-family: serif;
+  font-size: 2.6rem;
+  letter-spacing: 1.5px;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+}
+
+.menu-wrapper { position: relative; }
+
+/* Ensure the right-side items (login + menu) sit side-by-side */
+@media (min-width: 901px) {
+  .topbar-right {
+    position: absolute;
+    right: 16px;
+    top: 12px;
+  }
+}
+
+/* If already on mobile, keep them in-flow inside the header */
+.hamburger {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.menu {
+  position: fixed;
+  top: 76px;
+  right: 16px;
+  margin-top: 0;
+
+  /* Floating panel (so it never hides behind other fixed elements) */
+  min-width: 260px;
+  width: 260px;
+  background: rgba(24, 24, 27, 0.98);
+  color: #fff;
+  border: 1px solid rgba(68, 68, 68, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+
+  padding: 10px;
+  display: none;
+  z-index: 3000;
+
+  /* Keep fully visible */
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+
+  /* Ensure it can’t be pushed off-screen by transforms */
+  transform: translateZ(0);
+
+  /* Extra safety: keep visible above any other stacking contexts */
+  pointer-events: auto;
+}
+
+.menu.open {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+.menu-item, .fab-item {
+  width: 100%;
+  text-align: left;
+  background: #18181b;
+  color: #fff;
+  border: none;
+  /* match the instrument-item spacing */
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+/* Login menu items should be smaller and distinct */
+.login-menu .menu-item {
+  width: 100%;
+  text-align: left;
+  background: #18181b;
+  color: #fff;
+  border: none;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.menu-item:hover,
+.menu-item:focus,
+.menu-item.selected,
+.fab-item:hover,
+.fab-item:focus,
+.fab-item.selected,
+.login-menu .menu-item:hover,
+.login-menu .menu-item:focus,
+.login-menu .menu-item.selected {
+  background: linear-gradient(180deg,#2e2e33 0%, #232326 100%) !important;
+  color: #fff !important;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.login-menu-wrapper {
+  position: relative;
+  margin-left: 12px;
+  display: inline-block;
+  z-index: 5000; /* ensure wrapper sits above content */
+}
+.login-hamburger {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.login-menu {
+  /* Position relative to its wrapper so it won't be clipped by other containers */
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  margin-top: 0;
+  /* Keep login menu smaller than main menu */
+  min-width: 160px;
+  width: 180px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.4), 0 2px 8px rgba(15,23,42,0.10);
+  /* use same inner spacing as the sidebar's instrument list */
+  padding: 6px;
+  display: none;
+  z-index: 5000;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+.login-menu.open { display: block; }
+
+/* Mobile: keep a normal dropdown for the login menu (square button) */
+@media (max-width: 900px) {
+  .login-menu-wrapper { z-index: 11; }
+  .login-hamburger {
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    width: auto;
+    height: auto;
+  }
+
+  .login-menu-wrapper .login-menu {
+    position: absolute;
+    left: 0;
+    top: 52px;
+    width: 180px;
+    min-width: 160px;
+    padding: 6px;
+    background: #18181b;
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(15,23,42,0.4);
+    display: none;
+    pointer-events: auto;
+  }
+
+  .login-menu-wrapper .login-menu.open { display: block; }
+
+  .login-menu-wrapper .login-menu .menu-item {
+    position: relative;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    padding: 6px 8px;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+    margin: 4px 0;
+  }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 0;
+  height: calc(100vh - 56px);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    height: calc(100vh - 56px);
+  }
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #222;
+  background: #000;
+  overflow: hidden;
+  /* Allow scrolling only in inner list containers */
+  overscroll-behavior: contain;
+  height: 100%;
+}
+.sidebar-header { 
+
+  padding: 12px; 
+  border-bottom: 1px solid #e2e8f0; 
+  position: sticky;
+  top: 0;
+  background: #000;
+  z-index: 10;
+}
+.sidebar-header h2 { margin: 0 0 8px 0; font-size: 16px; }
+.sidebar-header input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.instrument-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  padding-bottom: 60px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable both-edges;
+  flex: 1;
+  min-height: 0;
+}
+.instrument-item {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: #000;
+  color: #fff;
+  transition: background 0.2s, border-color 0.2s;
+}
+.instrument-item:hover,
+.instrument-item.selected {
+  background: linear-gradient(180deg,#2e2e33 0%, #232326 100%) !important;
+  color: #fff !important;
+  transform: translateX(4px);
+  box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+}
+.instrument-emoji { font-size: 20px; }
+.instrument-name { font-weight: 500; display: inline; }
+
+.content { 
+  padding: 0; 
+  overflow: hidden; 
+  height: calc(100vh - 56px);
+  position: relative;
+}
+
+/* Instagram Reels Style Media Scroller */
+.media-scroller {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  position: relative;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+.media-scroller::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.media-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-item {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  background: #000;
+  flex-shrink: 0;
+  /* Ensure content is centered in the viewport */
+  box-sizing: border-box;
+}
+
+.media-wrapper {
+  position: relative;
+  width: 95vw;
+  height: 85vh;
+  max-width: 1200px;
+  max-height: 85vh;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background-color: #000; 
+  z-index: 100;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-content {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 16px;
+  /* enforce an opaque background for images/videos that might have transparency */
+  background-color: #000;
+  display: block;
+  /* Optimize for rendering */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.media-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.media-info {
+  text-align: center;
+  width: 100%;
+}
+
+.media-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+}
+
+.media-description {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.95;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  color: #f0f0f0;
+}
+
+.scroll-indicator {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 2px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.scroll-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scroll-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.scroll-dot.active {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.3);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.scroll-dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .media-item {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+/* Center media on small screens and adjust to fit */
+  .media-wrapper {
+    width: 98vw;
+    height: 75vh;
+    max-width: 98vw;
+    max-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .media-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  
+  .media-overlay {
+    padding: 16px;
+  }
+  
+  .media-title {
+    font-size: 1.1rem;
+  }
+  
+  .media-description {
+    font-size: 0.85rem;
+  }
+  
+  .scroll-indicator {
+    right: 16px;
+    padding: 6px 3px;
+  }
+  
+  .scroll-dot {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Ensure media items in mobile fill available space below the topbar so
+   the full media area is visible when scrolled */
+@media (max-width: 900px) {
+  .media-item {
+    /* fill the area between topbar and bottom boxes */
+    height: calc(100vh - 56px - 80px - 60px);
+  }
+
+  /* Make bottom box text slightly smaller and vertically centered on mobile */
+  .number-box {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 6px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 901px) {
+  .media-item {
+    height: calc(100vh - 56px - 50px);
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+.media-wrapper {
+    width: 95vw;
+    height: 85vh;
+    max-width: 1400px;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .media-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  
+  .media-overlay {
+    padding: 24px;
+  }
+  
+  .media-title {
+    font-size: 1.4rem;
+  }
+  
+  .media-description {
+    font-size: 1rem;
+  }
+
+  /* Slightly larger bottom box text on desktop for readability */
+  .number-box { font-size: 1.6rem; }
+}
+
+/* Hide the scroll indicator on touch devices so users can scroll by touch */
+@media (pointer: coarse) {
+  .scroll-indicator { display: none !important; }
+}
+
+/* Modal */
+.modal.hidden { display: none; }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.modal-card {
+  width: 100%;
+  max-width: 480px;
+  background: #18181b;
+  color: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.5);
+  overflow: hidden;
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; }
+.modal-body { padding: 16px; }
+.icon-btn { background: transparent; border: none; cursor: pointer; font-size: 16px; }
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: 96px;
+  z-index: 1004;
+}
+.fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #0ea5e9;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35);
+}
+
+/* Suggestion / Help tooltip on FAB */
+.fab .tooltiptext {
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+  transform: translateY(-8px);
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+  pointer-events: none;
+
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  z-index: 1003;
+}
+
+.fab:hover .tooltiptext,
+.fab:focus-within .tooltiptext {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  left: 50%;
+  transform: translate(-50%, -14px);
+}
+
+.fab-menu {
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+  background: #18181b;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.4);
+  padding: 6px;
+  display: none;
+  min-width: 160px;
+  z-index: 1002;
+}
+.fab-menu.open { display: block; }
+
+
+
+/* Profile/login button style (square by default) */
+.login-hamburger {
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.login-menu-wrapper { position: relative; z-index: 1005; }
+
+.login-menu-wrapper.open .login-hamburger { box-shadow: 0 8px 24px rgba(0,0,0,0.45); transform: scale(1.03); }
+
+/* Active states for selected options */
+.menu-item.active {
+  background: linear-gradient(180deg,#3a3a40 0%, #29292f 100%) !important;
+  color: #fff !important;
+  border-radius: 10px;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.6);
+}
+.number-box.active {
+  background: linear-gradient(180deg,#3a3a40 0%, #29292f 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+
+/* Smooth transform transitions for interactive controls */
+.menu-item, .instrument-item, .number-box, .fab-item {
+  transition: transform 0.18s cubic-bezier(.2,.9,.3,1), box-shadow 0.18s ease, background 0.18s ease;
+}
+
+
