@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Music_event/static/css/main.43cf3f49.css",
-    "main.js": "/Music_event/static/js/main.953f4820.js",
+    "main.js": "/Music_event/static/js/main.6774e9ef.js",
     "static/js/488.300e686d.chunk.js": "/Music_event/static/js/488.300e686d.chunk.js",
     "static/media/WhatsApp Video 2025-12-20 at 3.18.54 PM.mp4": "/Music_event/static/media/WhatsApp Video 2025-12-20 at 3.18.54 PM.3c3bf11f0e0e68090e8a.mp4",
     "static/media/WhatsApp Video 2025-10-12 at 1.40.08 PM.mp4": "/Music_event/static/media/WhatsApp Video 2025-10-12 at 1.40.08 PM.c11044f5de424bd199d4.mp4",
@@ -53,11 +53,11 @@
     "static/media/WhatsApp Image 2025-11-22 at 14.31.55_26bbb54c.jpg": "/Music_event/static/media/WhatsApp Image 2025-11-22 at 14.31.55_26bbb54c.381b988a26d824fd8f70.jpg",
     "index.html": "/Music_event/index.html",
     "main.43cf3f49.css.map": "/Music_event/static/css/main.43cf3f49.css.map",
-    "main.953f4820.js.map": "/Music_event/static/js/main.953f4820.js.map",
+    "main.6774e9ef.js.map": "/Music_event/static/js/main.6774e9ef.js.map",
     "488.300e686d.chunk.js.map": "/Music_event/static/js/488.300e686d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.43cf3f49.css",
-    "static/js/main.953f4820.js"
+    "static/js/main.6774e9ef.js"
   ]
 }
