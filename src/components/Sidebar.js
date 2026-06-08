@@ -28,34 +28,34 @@ function Sidebar({ expanded, setExpanded, onInstrumentSelect }) {
   // Media manifest for instruments
   const mediaManifest = {
     'Piano': [
-      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.55_aacab3db.jpg', title: 'Piano 1', description: 'Piano' },
-      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.56_b726d2c3.jpg', title: 'Piano 2', description: 'Piano' },
-      { type: 'image', src: 'assets/Piano/WhatsApp Image 2025-11-22 at 14.17.56_6ebf8e76.jpg', title: 'Piano 3', description: 'Piano' }
+      { type: 'image', src: 'assets/Piano/Piano1.jpg', title: 'Piano 1', description: 'Piano' },
+      { type: 'image', src: 'assets/Piano/Piano2.jpg', title: 'Piano 2', description: 'Piano' },
+      { type: 'image', src: 'assets/Piano/Piano3.jpg', title: 'Piano 3', description: 'Piano' }
     ],
     'Guitar': [
-      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.49_14c19661.jpg', title: 'Guitar 1', description: 'Guitar' },
-      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.49_7c881c60.jpg', title: 'Guitar 2', description: 'Guitar' },
-      { type: 'image', src: 'assets/Guitar/WhatsApp Image 2025-11-22 at 14.31.50_46fc9ccd.jpg', title: 'Guitar 3', description: 'Guitar' }
+      { type: 'image', src: 'assets/Guitar/Guitar1.jpg', title: 'Guitar 1', description: 'Guitar' },
+      { type: 'image', src: 'assets/Guitar/Guitar2.jpg', title: 'Guitar 2', description: 'Guitar' },
+      { type: 'image', src: 'assets/Guitar/Guitar3.jpg', title: 'Guitar 3', description: 'Guitar' }
     ],
     'Violin': [
-      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.51_c63d7995.jpg', title: 'Violin 1', description: 'Violin' },
-      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.51_4fdc6638.jpg', title: 'Violin 2', description: 'Violin' },
-      { type: 'image', src: 'assets/Violin/WhatsApp Image 2025-11-22 at 14.31.50_92a947a6.jpg', title: 'Violin 3', description: 'Violin' }
+      { type: 'image', src: 'assets/Violin/Violin1.jpg', title: 'Violin 1', description: 'Violin' },
+      { type: 'image', src: 'assets/Violin/Violin2.jpg', title: 'Violin 2', description: 'Violin' },
+      { type: 'image', src: 'assets/Violin/Violin3.jpg', title: 'Violin 3', description: 'Violin' }
     ],
     'Trumpet': [
-      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.52_e8df4a95.jpg', title: 'Trumpet 1', description: 'Trumpet' },
-      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.52_fbc64624.jpg', title: 'Trumpet 2', description: 'Trumpet' },
-      { type: 'image', src: 'assets/Trumpet/WhatsApp Image 2025-11-22 at 14.31.53_d1d46468.jpg', title: 'Trumpet 3', description: 'Trumpet' }
+      { type: 'image', src: 'assets/Trumpe/Trumpet1.jpg', title: 'Trumpet 1', description: 'Trumpet' },
+      { type: 'image', src: 'assets/Trumpe/Trumpet2.jpg', title: 'Trumpet 2', description: 'Trumpet' },
+      { type: 'image', src: 'assets/Trumpe/Trumpet3.jpg', title: 'Trumpet 3', description: 'Trumpet' }
     ],
     'Saxophone': [
-      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.54_5239ac92.jpg', title: 'Sax 1', description: 'Saxophone' },
-      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.53_4e308af9.jpg', title: 'Sax 2', description: 'Saxophone' },
-      { type: 'image', src: 'assets/Saxophone/WhatsApp Image 2025-11-22 at 14.31.54_96259198.jpg', title: 'Sax 3', description: 'Saxophone' }
+      { type: 'image', src: 'assets/Saxophone/Saxophone1.jpg', title: 'Sax 1', description: 'Saxophone' },
+      { type: 'image', src: 'assets/Saxophone/Saxophone2.jpg', title: 'Sax 2', description: 'Saxophone' },
+      { type: 'image', src: 'assets/Saxophone/Saxophone3.jpg', title: 'Sax 3', description: 'Saxophone' }
     ],
     'Drums': [
-      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.55_26bbb54c.jpg', title: 'Drum 1', description: 'Drums' },
-      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.55_c097ec9c.jpg', title: 'Drum 2', description: 'Drums' },
-      { type: 'image', src: 'assets/Drums/WhatsApp Image 2025-11-22 at 14.31.56_546b306a.jpg', title: 'Drum 3', description: 'Drums' }
+      { type: 'image', src: 'assets/Drums/Drums1.jpg', title: 'Drum 1', description: 'Drums' },
+      { type: 'image', src: 'assets/Drums/Drums2.jpg', title: 'Drum 2', description: 'Drums' },
+      { type: 'image', src: 'assets/Drums/Drums3.jpg', title: 'Drum 3', description: 'Drums' }
     ]
   };
 

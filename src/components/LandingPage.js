@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 import './LandingPage.css';
 import logo from '../assets/sirilogo.jpg';
-import MediaScroller from './MediaScroller';
 
 
 // Import Firebase compat SDK for better testing support
@@ -28,7 +27,6 @@ let db = null;
 function LandingPage() {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [inForm, setInForm] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
@@ -65,6 +63,21 @@ function LandingPage() {
   }, []);
 
   useEffect(() => {
+    // Open modal deep-links: /?auth=login|signup
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const authMode = params.get('auth');
+      if (authMode === 'login' || authMode === 'signup') {
+        setShowModal(true);
+        setInForm(true);
+        setIsSignup(authMode === 'signup');
+        setIsForgot(false);
+        setError('');
+      }
+    } catch (e) {
+      console.warn('Auth deep-link parse failed:', e);
+    }
+    
     // Setup reCAPTCHA after Firebase is ready (don't do it in useEffect, do it in sendOTP instead)
   }, [firebaseReady, showModal, isSignup]);
 
@@ -259,20 +272,14 @@ function LandingPage() {
     <div className="landing-page">
       <div className="landing-banner">
         <div className="headerlanding">
-          <div className="dropdown-container">
-            <button className="login-hamburger" onClick={() => { setShowDropdown(!showDropdown); }}>👤</button>
-            {showDropdown && (
-              <div className="dropdown-menu">
-                <button className="dropdown-item" onClick={() => { setShowDropdown(false); setShowModal(true); setInForm(true); setIsSignup(false); setIsForgot(false); setError(''); }}>Login</button>
-                <button className="dropdown-item" onClick={() => { setShowDropdown(false); setShowModal(true); setInForm(true); setIsSignup(true); setIsForgot(false); setError(''); }}>Sign Up</button>
-              </div>
-            )}
-          </div>
           <div className="title"><span className="logo">🎵</span>Music Event's</div>
+          <div className="login-button-group">
+            <button className="login-btn-top" onClick={() => { setShowModal(true); setInForm(true); setIsSignup(false); setIsForgot(false); setError(''); }}>Login</button>
+            <button className="signup-btn-top" onClick={() => { setShowModal(true); setInForm(true); setIsSignup(true); setIsForgot(false); setError(''); }}>Sign Up</button>
+          </div>
         </div>
         <div className="bodylandng">
           <img src={logo} alt="Sri Logo" className="sri-logo" />
-          <MediaScroller />
         </div>
       </div>
 

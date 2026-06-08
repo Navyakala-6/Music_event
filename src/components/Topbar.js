@@ -4,7 +4,7 @@ import { useAuth } from './AuthProvider';
 import { useWishlist } from './WishlistContext';
 import logo from '../assets/sirilogo.jpg';
 
-function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect }) {
+function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect, onAuthAction }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginMenuOpen, setLoginMenuOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
@@ -108,8 +108,8 @@ function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect }) {
 
   // Get user data from localStorage
   const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const displayName = editedUser.username || storedUser.username || user?.displayName || user?.email || 'User';
-  const userInitial = displayName.charAt(0).toUpperCase();
+  const displayName = editedUser.username || storedUser.username || user?.displayName || user?.email || '';
+  const userInitial = displayName ? displayName.charAt(0).toUpperCase() : '☰';
 
   return (
     <header className="topbar">
@@ -176,7 +176,7 @@ function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect }) {
           </div>
         </div>
 
-        {/* Login Menu - User initial button with tooltip */}
+        {/* Login Menu - User initial button with dropdown */}
         <div className="login-menu-wrapper" ref={loginMenuRef}>
           <button
             type="button"
@@ -192,12 +192,39 @@ function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect }) {
             {userInitial}
           </button>
           <div className={`menu login-menu ${loginMenuOpen ? 'open' : ''}`}>
-            <button type="button" className="menu-item" onClick={handleMyAccount}>
-              My Account
-            </button>
-            <button type="button" className="menu-item" onClick={handleLogout}>
-              Logout
-            </button>
+            {user ? (
+              <>
+                <button type="button" className="menu-item" onClick={handleMyAccount}>
+                  My Account
+                </button>
+                <button type="button" className="menu-item" onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="menu-item"
+                  onClick={() => {
+                    setLoginMenuOpen(false);
+                    if (onAuthAction) onAuthAction('login');
+                  }}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="menu-item"
+                  onClick={() => {
+                    setLoginMenuOpen(false);
+                    if (onAuthAction) onAuthAction('signup');
+                  }}
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

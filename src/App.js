@@ -46,6 +46,10 @@ function MainApp() {
         onMenuSelect={handleMenuSelect}
         onHomeClick={handleHomeClick}
         onWishlistSelect={handleWishlistSelect}
+        onAuthAction={(mode) => {
+          // mode: 'login' | 'signup'
+          window.location.href = `${process.env.PUBLIC_URL || ''}/?auth=${mode}`;
+        }}
       />
       <div className="layout">
         <Sidebar
@@ -92,9 +96,11 @@ function AppRoutes() {
 }
 
 function App() {
+  // eslint-disable-next-line no-undef
+
   return (
     <AuthProvider>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <AppRoutes />
         <div className='footerLanding'>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
