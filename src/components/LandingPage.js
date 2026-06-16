@@ -27,6 +27,7 @@ let db = null;
 function LandingPage() {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [inForm, setInForm] = useState(false);
   const [isForgot, setIsForgot] = useState(false);
@@ -272,11 +273,16 @@ function LandingPage() {
     <div className="landing-page">
       <div className="landing-banner">
         <div className="headerlanding">
-          <div className="title"><span className="logo">🎵</span>Music Event's</div>
-          <div className="login-button-group">
-            <button className="login-btn-top" onClick={() => { setShowModal(true); setInForm(true); setIsSignup(false); setIsForgot(false); setError(''); }}>Login</button>
-            <button className="signup-btn-top" onClick={() => { setShowModal(true); setInForm(true); setIsSignup(true); setIsForgot(false); setError(''); }}>Sign Up</button>
+          <div className="dropdown-container">
+            <button className="login-hamburger" onClick={() => { setShowDropdown(!showDropdown); }}>👤</button>
+            {showDropdown && (
+              <div className="dropdown-menu">
+                <button className="dropdown-item" onClick={() => { setShowDropdown(false); setShowModal(true); setInForm(true); setIsSignup(false); setIsForgot(false); setError(''); }}>Login</button>
+                <button className="dropdown-item" onClick={() => { setShowDropdown(false); setShowModal(true); setInForm(true); setIsSignup(true); setIsForgot(false); setError(''); }}>Sign Up</button>
+              </div>
+            )}
           </div>
+          <div className="title"><span className="logo">🎵</span>Music Event's</div>
         </div>
         <div className="bodylandng">
           <img src={logo} alt="Sri Logo" className="sri-logo" />

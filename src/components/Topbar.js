@@ -114,6 +114,58 @@ function Topbar({ onLogout, onMenuSelect, onHomeClick, onWishlistSelect, onAuthA
   return (
     <header className="topbar">
       <div className="topbar-left">
+        {/* Login Menu - User initial button with dropdown */}
+        <div className="login-menu-wrapper" ref={loginMenuRef}>
+          <button
+            type="button"
+            className="hamburger login-hamburger topbar-icon-btn"
+            onClick={() => {
+              setLoginMenuOpen(!loginMenuOpen);
+              setWishlistOpen(false);
+            }}
+            aria-haspopup="true"
+            aria-expanded={loginMenuOpen}
+            aria-label="Settings"
+          >
+            {userInitial}
+          </button>
+          <div className={`menu login-menu ${loginMenuOpen ? 'open' : ''}`}>
+            {user ? (
+              <>
+                <button type="button" className="menu-item" onClick={handleMyAccount}>
+                  My Account
+                </button>
+                <button type="button" className="menu-item" onClick={handleLogout}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="menu-item"
+                  onClick={() => {
+                    setLoginMenuOpen(false);
+                    if (onAuthAction) onAuthAction('login');
+                  }}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className="menu-item"
+                  onClick={() => {
+                    setLoginMenuOpen(false);
+                    if (onAuthAction) onAuthAction('signup');
+                  }}
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Login Logo - acts as home button with tooltip */}
         <button
           type="button"

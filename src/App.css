@@ -68,6 +68,7 @@ body.login-page .bottom-boxes {
   justify-self: start;
   position: relative;
   z-index: 1110;
+  justify-content: flex-start;
 }
 .topbar-right {
   display: flex;
@@ -111,6 +112,9 @@ body.login-page .bottom-boxes {
   border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 .menu {
   /* keep dropdown above other content */
